@@ -1,6 +1,13 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
+  firebaseId: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    index: true
+  },
   email: {
     type: String,
     required: true,
@@ -53,6 +60,7 @@ const userSchema = new mongoose.Schema({
 });
 
 // Indexes
+userSchema.index({ firebaseId: 1 }, { unique: true });
 userSchema.index({ email: 1 }, { unique: true });
 userSchema.index({ role: 1 });
 

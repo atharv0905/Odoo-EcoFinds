@@ -4,6 +4,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
+// Email service is configured in services/emailService.js
+
 // Import routes
 const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
@@ -23,7 +25,16 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   credentials: false, // Set to false when origin is '*'
   optionsSuccessStatus: 200, // Some legacy browsers choke on 204
-  preflightContinue: false
+  preflightContinue: false,
+  allowedHeaders: [
+    'Origin',
+    'X-Requested-With',
+    'Content-Type',
+    'Accept',
+    'Authorization',
+    'Cache-Control',
+    'Pragma'
+  ]
 };
 
 // Middleware
