@@ -36,6 +36,37 @@ const productOrderSchema = new mongoose.Schema({
     enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'],
     default: 'pending'
   },
+  paymentStatus: {
+    type: String,
+    enum: ['unpaid', 'paid', 'failed', 'refunded'],
+    default: 'unpaid'
+  },
+  paymentMethod: {
+    type: String,
+    enum: ['razorpay', 'manual', 'cash_on_delivery'],
+    default: 'manual'
+  },
+  paymentId: {
+    type: String,
+    sparse: true
+  },
+  razorpayOrderId: {
+    type: String,
+    sparse: true
+  },
+  razorpayPaymentId: {
+    type: String,
+    sparse: true
+  },
+  razorpaySignature: {
+    type: String,
+    sparse: true
+  },
+  orderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Order',
+    required: true
+  },
   orderDate: {
     type: Date,
     default: Date.now
@@ -50,6 +81,10 @@ const productOrderSchema = new mongoose.Schema({
   notes: {
     type: String,
     maxlength: 500
+  },
+  phoneNumber: {
+    type: String,
+    required: true
   }
 }, {
   timestamps: true

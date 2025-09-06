@@ -10,6 +10,8 @@ const productRoutes = require('./routes/productRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const purchaseRoutes = require('./routes/purchaseRoutes');
 const productOrderRoutes = require('./routes/productOrderRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 // Initialize Express app
 const app = express();
@@ -40,6 +42,8 @@ app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/purchases', purchaseRoutes);
 app.use('/api/product-orders', productOrderRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -51,7 +55,9 @@ app.get('/', (req, res) => {
       products: '/api/products',
       cart: '/api/cart',
       purchases: '/api/purchases',
-      productOrders: '/api/product-orders'
+      productOrders: '/api/product-orders',
+      orders: '/api/orders',
+      payments: '/api/payments'
     }
   });
 });
