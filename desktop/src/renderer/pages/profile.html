@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFinds - Profile</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <!-- Navbar will be inserted here by navbar.js -->
+    
+    <div class="container">
+        <div class="profile-container">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <div class="avatar-circle">
+                        <span id="avatarInitials">U</span>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h1 id="profileName">User</h1>
+                    <p id="profileEmail">user@example.com</p>
+                    <div class="profile-badges">
+                        <div class="badge eco-warrior">🌱 Eco Warrior</div>
+                        <div class="badge level-badge">Level <span id="userLevel">1</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Stats Grid -->
+            <div class="profile-stats-grid">
+                <div class="stat-card purchases">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="totalOrders">0</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card points">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="ecoPoints">0</div>
+                        <div class="stat-label">Eco Points</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card savings">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="totalSavings">$0</div>
+                        <div class="stat-label">Total Spent</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card impact">
+                    <div class="stat-icon">🌍</div>
+                    <div class="stat-content">
+                        <div class="stat-number" id="carbonSaved">0kg</div>
+                        <div class="stat-label">CO2 Saved</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="section-card">
+                <h2>Recent Activity</h2>
+                <div id="recentActivity" class="activity-list">
+                    <!-- Activity items will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="section-card">
+                <h2>Achievements & Badges</h2>
+                <div id="achievementsList" class="achievements-grid">
+                    <!-- Achievements will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="section-card">
+                <h2>Quick Actions</h2>
+                <div class="quick-actions-grid">
+                    <button class="action-btn" onclick="window.location.href='dashboard.html'">
+                        <span class="action-icon">🛍️</span>
+                        <span class="action-text">Browse Products</span>
+                    </button>
+                    
+                    <button class="action-btn" onclick="window.location.href='cart.html'">
+                        <span class="action-icon">🛒</span>
+                        <span class="action-text">View Cart</span>
+                    </button>
+                    
+                    <button class="action-btn" onclick="window.location.href='purchases.html'">
+                        <span class="action-icon">📦</span>
+                        <span class="action-text">Order History</span>
+                    </button>
+                    
+                    <button class="action-btn" onclick="window.location.href='settings.html'">
+                        <span class="action-icon">⚙️</span>
+                        <span class="action-text">Settings</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/api-service.js"></script>
+    <script src="../assets/js/auth-service.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/profile.js"></script>
+</body>
+</html>

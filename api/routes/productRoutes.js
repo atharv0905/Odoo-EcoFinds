@@ -341,7 +341,8 @@ router.delete('/:id', async (req, res) => {
     }
 
     // Verify ownership
-    if (createdBy && product.createdBy !== createdBy) {
+    if (createdBy && product.createdByFId !== createdBy) {
+      console.log("CREATEDBY", product.createdByFId, createdBy)
       return res.status(403).json({ 
         error: 'You can only delete your own products' 
       });

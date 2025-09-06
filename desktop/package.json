@@ -1,0 +1,31 @@
+{
+  "name": "odoo-ecofinds",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atharv0905/Odoo-EcoFinds.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/atharv0905/Odoo-EcoFinds/issues"
+  },
+  "homepage": "https://github.com/atharv0905/Odoo-EcoFinds#readme",
+  "devDependencies": {
+    "electron": "^38.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "firebase": "^12.2.1",
+    "mongodb": "^6.19.0",
+    "mongoose": "^8.18.0"
+  }
+}

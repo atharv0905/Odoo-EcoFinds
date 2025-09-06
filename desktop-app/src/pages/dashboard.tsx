@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, LogOut, User, Mail } from "lucide-react"
+import { Loader2, LogOut, User, Mail, Package, ShoppingCart } from "lucide-react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import LayoutDashboard from "@/components/dashboard/layout"
@@ -92,6 +92,49 @@ export default function DashboardPage() {
                                 </>
                             )}
                         </Button>
+                    </div>
+
+                    {/* Quick Actions */}
+                    <div className="grid gap-4 md:grid-cols-4 mb-8">
+                        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/products")}>
+                            <CardContent className="p-6 text-center">
+                                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <Package className="h-6 w-6 text-green-600" />
+                                </div>
+                                <h3 className="font-semibold">Browse Products</h3>
+                                <p className="text-sm text-gray-600">Discover eco-friendly products</p>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/cart")}>
+                            <CardContent className="p-6 text-center">
+                                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <ShoppingCart className="h-6 w-6 text-blue-600" />
+                                </div>
+                                <h3 className="font-semibold">My Cart</h3>
+                                <p className="text-sm text-gray-600">View items in your cart</p>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/orders")}>
+                            <CardContent className="p-6 text-center">
+                                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <Package className="h-6 w-6 text-purple-600" />
+                                </div>
+                                <h3 className="font-semibold">My Orders</h3>
+                                <p className="text-sm text-gray-600">Track your orders</p>
+                            </CardContent>
+                        </Card>
+
+                        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => navigate("/dashboard/mylisting")}>
+                            <CardContent className="p-6 text-center">
+                                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <User className="h-6 w-6 text-orange-600" />
+                                </div>
+                                <h3 className="font-semibold">My Products</h3>
+                                <p className="text-sm text-gray-600">Manage your listings</p>
+                            </CardContent>
+                        </Card>
                     </div>
 
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

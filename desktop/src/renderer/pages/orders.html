@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFinds - My Orders</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <!-- Navbar will be inserted here by navbar.js -->
+    
+    <div class="container">
+        <div class="orders-container">
+            <!-- Orders Header -->
+            <div class="orders-header">
+                <h1>📦 My Orders</h1>
+                <p class="orders-subtitle">Track your purchases and payments</p>
+                
+                <!-- Order Filters -->
+                <div class="order-filters"> 
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-status="all">All Orders</button>
+                        <button class="filter-tab" data-status="draft">Draft</button>
+                        <button class="filter-tab" data-status="pending_payment">Pending Payment</button>
+                        <button class="filter-tab" data-status="paid">Paid</button>
+                        <button class="filter-tab" data-status="processing">Processing</button>
+                        <button class="filter-tab" data-status="shipped">Shipped</button>
+                        <button class="filter-tab" data-status="delivered">Delivered</button>
+                        <button class="filter-tab" data-status="cancelled">Cancelled</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="ordersLoading" class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Loading your orders...</p>
+            </div>
+
+            <!-- Orders Content -->
+            <div id="ordersContent" class="orders-content hidden">
+                <div id="ordersList" class="orders-list">
+                    <!-- Orders will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Empty Orders State -->
+            <div id="emptyOrders" class="empty-orders hidden">
+                <div class="empty-orders-content">
+                    <div class="empty-orders-icon">📦</div>
+                    <h3>No orders found</h3>
+                    <p>You haven't placed any orders yet. Start shopping for eco-friendly products!</p>
+                    <button class="btn btn-primary" onclick="window.location.href='dashboard.html'">
+                        Browse Products
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div id="orderModal" class="modal hidden">
+        <div class="modal-content order-modal-content">
+            <div class="modal-header">
+                <h3 id="modalOrderTitle">Order Details</h3>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalOrderContent">
+                <!-- Order details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button id="payOrderBtn" class="btn btn-primary hidden">Pay Now</button>
+                <button id="cancelOrderBtn" class="btn btn-danger hidden">Cancel Order</button>
+                <button id="closeModalBtn" class="btn btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="confirmTitle">Confirm Action</h3>
+            <p id="confirmMessage">Are you sure?</p>
+            <div class="modal-actions">
+                <button id="confirmYes" class="btn btn-primary">Yes</button>
+                <button id="confirmNo" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/api-service.js"></script>
+    <script src="../assets/js/auth-service.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/orders.js"></script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFinds - My Products</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <!-- Navbar will be inserted here by navbar.js -->
+    
+    <div class="container">
+        <div class="my-products-container">
+            <!-- Header Section -->
+            <div class="page-header">
+                <div class="header-content">
+                    <h1>📦 My Products</h1>
+                    <p class="page-subtitle">Manage your eco-friendly product listings</p>
+                </div>
+                <div class="header-actions">
+                    <button id="addProductBtn" class="btn btn-primary">
+                        <span class="btn-icon">➕</span>
+                        Add New Product
+                    </button>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card products">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalProducts">0</div>
+                        <div class="stat-label">Total Products</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card active">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="activeProducts">0</div>
+                        <div class="stat-label">Active Products</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card orders">
+                    <div class="stat-icon">🛒</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalOrders">0</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card revenue">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalRevenue">$0</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="action-btn" onclick="showProductOrders()">
+                    <span class="action-icon">📋</span>
+                    <span class="action-text">View All Orders</span>
+                </button>
+                
+                <button class="action-btn" onclick="showLowStockProducts()">
+                    <span class="action-icon">⚠️</span>
+                    <span class="action-text">Low Stock Alert</span>
+                </button>
+                
+                <button class="action-btn" onclick="showAnalytics()">
+                    <span class="action-icon">📊</span>
+                    <span class="action-text">Analytics</span>
+                </button>
+            </div>
+
+            <!-- Filter and Search -->
+            <div class="controls-section">
+                <div class="search-controls">
+                    <input type="text" id="productSearch" placeholder="Search your products..." class="search-input">
+                    <button id="searchBtn" class="btn btn-secondary">🔍</button>
+                </div>
+                
+                <div class="filter-controls">
+                    <select id="statusFilter" class="filter-select">
+                        <option value="all">All Products</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="low_stock">Low Stock</option>
+                        <option value="out_of_stock">Out of Stock</option>
+                    </select>
+                    
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="all">All Categories</option>
+                        <option value="Kitchen">Kitchen</option>
+                        <option value="Personal Care">Personal Care</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Home & Garden">Home & Garden</option>
+                        <option value="Fashion">Fashion</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="productsLoading" class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Loading your products...</p>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="productsGrid" class="products-grid hidden">
+                <!-- Products will be loaded here -->
+            </div>
+
+            <!-- No Products State -->
+            <div id="noProducts" class="no-products hidden">
+                <div class="no-products-content">
+                    <div class="no-products-icon">📦</div>
+                    <h3>No products yet</h3>
+                    <p>Start selling eco-friendly products and build your sustainable business!</p>
+                    <button class="btn btn-primary" onclick="showAddProductModal()">
+                        Add Your First Product
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Product Modal -->
+    <div id="productModal" class="modal hidden">
+        <div class="modal-content product-modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Product</h3>
+                <button class="modal-close" onclick="hideProductModal()">×</button>
+            </div>
+            
+            <form id="productForm" class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productTitle">Product Title *</label>
+                        <input type="text" id="productTitle" name="title" required maxlength="200">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productCategory">Category *</label>
+                        <select id="productCategory" name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="Kitchen">Kitchen</option>
+                            <option value="Personal Care">Personal Care</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Home & Garden">Home & Garden</option>
+                            <option value="Fashion">Fashion</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productDescription">Description *</label>
+                    <textarea id="productDescription" name="description" required maxlength="1000" rows="4"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productPrice">Price ($) *</label>
+                        <input type="number" id="productPrice" name="price" required min="0" step="0.01">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productStock">Stock Quantity *</label>
+                        <input type="number" id="productStock" name="stock" required min="0">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productImage">Image URL</label>
+                    <input type="url" id="productImage" name="image" placeholder="https://example.com/image.jpg">
+                    <small class="form-help">Provide a URL to your product image</small>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="hideProductModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveProductBtn">
+                        <span id="saveProductText">Save Product</span>
+                        <div id="saveProductLoading" class="loading hidden"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Stock Update Modal -->
+    <div id="stockModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Update Stock</h3>
+                <button class="modal-close" onclick="hideStockModal()">×</button>
+            </div>
+            
+            <div class="modal-body">
+                <p id="stockProductName">Product Name</p>
+                <div class="form-group">
+                    <label for="newStock">New Stock Quantity</label>
+                    <input type="number" id="newStock" min="0" required>
+                    <small class="form-help">Current stock: <span id="currentStock">0</span></small>
+                </div>
+                
+                <div class="form-actions">
+                    <button class="btn btn-secondary" onclick="hideStockModal()">Cancel</button>
+                    <button class="btn btn-primary" id="updateStockBtn" onclick="updateStock()">
+                        Update Stock
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Orders Modal -->
+    <div id="ordersModal" class="modal hidden">
+        <div class="modal-content orders-modal">
+            <div class="modal-header">
+                <h3>Product Orders</h3>
+                <button class="modal-close" onclick="hideOrdersModal()">×</button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="productOrdersList" class="orders-list">
+                    <!-- Orders will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/api-service.js"></script>
+    <script src="../assets/js/auth-service.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/my-products.js"></script>
+</body>
+</html>

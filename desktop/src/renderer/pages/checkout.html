@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFinds - Checkout</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <!-- Navbar will be inserted here by navbar.js -->
+    
+    <div class="container">
+        <div class="checkout-container">
+            <!-- Checkout Header -->
+            <div class="checkout-header">
+                <h1>🛒 Secure Checkout</h1>
+                <p class="checkout-subtitle">Complete your order details</p>
+                <div class="checkout-steps">
+                    <div class="step active">
+                        <span class="step-number">1</span>
+                        <span class="step-label">Shipping Details</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        <span class="step-label">Order Review</span>
+                    </div>
+                    <div class="step">
+                        <span class="step-number">3</span>
+                        <span class="step-label">Payment</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="checkoutLoading" class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Loading checkout...</p>
+            </div>
+
+            <!-- Checkout Content -->
+            <div id="checkoutContent" class="checkout-content hidden">
+                <div class="checkout-main">
+                    <!-- Step 1: Shipping Details -->
+                    <div id="step1" class="checkout-step active">
+                        <div class="step-content">
+                            <h2>📍 Shipping Information</h2>
+                            <form id="shippingForm" class="shipping-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="phoneNumber">Phone Number *</label>
+                                        <input type="tel" id="phoneNumber" name="phoneNumber" required 
+                                               placeholder="+91 XXXXXXXXXX" pattern="[+][0-9\s\-\(\)]+">
+                                        <div class="form-error" id="phoneError"></div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group full-width">
+                                        <label for="street">Street Address *</label>
+                                        <input type="text" id="street" name="street" required 
+                                               placeholder="House/Flat no., Building name, Street">
+                                        <div class="form-error" id="streetError"></div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="city">City *</label>
+                                        <input type="text" id="city" name="city" required placeholder="City">
+                                        <div class="form-error" id="cityError"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="state">State *</label>
+                                        <input type="text" id="state" name="state" required placeholder="State">
+                                        <div class="form-error" id="stateError"></div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="zipCode">ZIP Code *</label>
+                                        <input type="text" id="zipCode" name="zipCode" required 
+                                               placeholder="XXXXXX" pattern="[0-9]{6}">
+                                        <div class="form-error" id="zipCodeError"></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="country">Country *</label>
+                                        <select id="country" name="country" required>
+                                            <option value="India">India</option>
+                                            <option value="USA">United States</option>
+                                            <option value="UK">United Kingdom</option>
+                                            <option value="Canada">Canada</option>
+                                            <option value="Australia">Australia</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group full-width">
+                                        <label for="notes">Special Instructions (Optional)</label>
+                                        <textarea id="notes" name="notes" rows="3" 
+                                                  placeholder="Any special delivery instructions..."></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="step-actions">
+                                    <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                                        ← Back to Cart
+                                    </button>
+                                    <button type="button" id="continueToReview" class="btn btn-primary">
+                                        Continue to Review →
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Order Review -->
+                    <div id="step2" class="checkout-step">
+                        <div class="step-content">
+                            <h2>📋 Order Review</h2>
+                            
+                            <!-- Order Items -->
+                            <div class="order-items">
+                                <h3>Items in Your Order</h3>
+                                <div id="orderItemsList" class="order-items-list">
+                                    <!-- Items will be loaded here -->
+                                </div>
+                            </div>
+
+                            <!-- Shipping Summary -->
+                            <div class="shipping-summary">
+                                <h3>📍 Shipping Details</h3>
+                                <div id="shippingSummary" class="summary-card">
+                                    <!-- Shipping details will be loaded here -->
+                                </div>
+                            </div>
+
+                            <div class="step-actions">
+                                <button type="button" id="backToShipping" class="btn btn-secondary">
+                                    ← Back to Shipping
+                                </button>
+                                <button type="button" id="saveOrder" class="btn btn-success">
+                                    <span id="saveOrderText">Save Order</span>
+                                    <div id="saveOrderLoading" class="loading hidden"></div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Payment -->
+                    <div id="step3" class="checkout-step">
+                        <div class="step-content">
+                            <h2>💳 Payment</h2>
+                            
+                            <div id="orderSavedMessage" class="success-message">
+                                <div class="success-icon">✅</div>
+                                <h3>Order Saved Successfully!</h3>
+                                <p>Your order has been saved and is ready for payment.</p>
+                                <div class="order-details">
+                                    <p><strong>Order ID:</strong> <span id="savedOrderId"></span></p>
+                                    <p><strong>Total Amount:</strong> <span id="savedOrderTotal"></span></p>
+                                </div>
+                            </div>
+
+                            <div class="payment-options">
+                                <div class="payment-note">
+                                    <div class="payment-note-icon">ℹ️</div>
+                                    <div class="payment-note-content">
+                                        <h4>Multiple Payment Options Available</h4>
+                                        <p>You can pay now using Razorpay (UPI, Cards, Net Banking) or use manual payment methods. Your order is saved and you can always come back to complete the payment later.</p>
+                                    </div>
+                                </div>
+
+                                <div class="payment-actions">
+                                    <button type="button" id="payNowBtn" class="btn btn-primary payment-btn">
+                                        <span id="payNowText">💳 Pay Now</span>
+                                        <div id="payNowLoading" class="loading hidden"></div>
+                                    </button>
+                                    
+                                    <button type="button" id="payLaterBtn" class="btn btn-secondary">
+                                        Pay Later
+                                    </button>
+                                </div>
+
+                                <div class="payment-security">
+                                    <div class="security-badges">
+                                        <span class="security-badge">🔒 SSL Secured</span>
+                                        <span class="security-badge">🛡️ Razorpay Protected</span>
+                                        <span class="security-badge">💯 100% Safe</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="step-actions">
+                                <button type="button" id="backToReview" class="btn btn-secondary">
+                                    ← Back to Review
+                                </button>
+                                <button type="button" id="viewOrders" class="btn btn-outline">
+                                    View My Orders
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary Sidebar -->
+                <div class="order-summary-sidebar">
+                    <div class="summary-card">
+                        <h3>💰 Order Summary</h3>
+                        
+                        <div class="summary-items">
+                            <div class="summary-row">
+                                <span>Items (<span id="itemCount">0</span>):</span>
+                                <span id="subtotalAmount">₹0.00</span>
+                            </div>
+                            
+                            <div class="summary-row">
+                                <span>Shipping:</span>
+                                <span id="shippingAmount" class="free-shipping">Free</span>
+                            </div>
+                            
+                            <div class="summary-row eco-row">
+                                <span>🌱 Eco Impact Points:</span>
+                                <span id="ecoPoints" class="eco-bonus">+0</span>
+                            </div>
+                            
+                            <div class="summary-divider"></div>
+                            
+                            <div class="summary-row total-row">
+                                <span>Total:</span>
+                                <span id="totalAmount">₹0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="eco-impact-summary">
+                            <div class="eco-impact-icon">🌍</div>
+                            <div class="eco-impact-content">
+                                <h4>Environmental Impact</h4>
+                                <p>Your purchase supports sustainable practices and helps reduce carbon footprint!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty Cart State -->
+            <div id="emptyCheckout" class="empty-checkout hidden">
+                <div class="empty-checkout-content">
+                    <div class="empty-checkout-icon">🛒</div>
+                    <h3>Your cart is empty</h3>
+                    <p>Add some eco-friendly products to your cart before checkout!</p>
+                    <button class="btn btn-primary" onclick="window.location.href='dashboard.html'">
+                        Browse Products
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal hidden">
+        <div class="modal-content">
+            <h3 id="confirmTitle">Confirm Action</h3>
+            <p id="confirmMessage">Are you sure?</p>
+            <div class="modal-actions">
+                <button id="confirmYes" class="btn btn-primary">Yes</button>
+                <button id="confirmNo" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/api-service.js"></script>
+    <script src="../assets/js/auth-service.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/checkout.js"></script>
+</body>
+</html>

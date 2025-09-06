@@ -7,7 +7,13 @@ import Login from './pages/login';
 import Dashboard from './pages/dashboard';
 import Register from './pages/register';
 import { AuthProvider } from '@/hooks/auth-context.tsx';
+// import { CartProvider } from '@/hooks/cart-context.tsx';
 import MyListing from './pages/dashboard/mylisting';
+import ProductsPage from './pages/products';
+import ProductDetailPage from './pages/product-detail';
+import CartPage from './pages/cart';
+import CheckoutPage from './pages/checkout';
+import OrdersPage from './pages/orders';
 
 
 const Layout = () => {
@@ -58,19 +64,26 @@ const Layout = () => {
 function App(): React.JSX.Element {
   return (
     <AuthProvider>
-      <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-        <HashRouter>
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="login" element={<Login />} />
-              <Route path="register" element={<Register />} />
-              <Route path="dashboard/mylisting" element={<MyListing />} />
-            </Route>
-          </Routes>
-        </HashRouter>
-      </ThemeProvider>
+      {/* <CartProvider> */}
+        <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+          <HashRouter>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Home />} />
+                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="login" element={<Login />} />
+                <Route path="register" element={<Register />} />
+                <Route path="dashboard/mylisting" element={<MyListing />} />
+                <Route path="products" element={<ProductsPage />} />
+                <Route path="product/:productId" element={<ProductDetailPage />} />
+                <Route path="cart" element={<CartPage />} />
+                <Route path="checkout" element={<CheckoutPage />} />
+                <Route path="orders" element={<OrdersPage />} />
+              </Route>
+            </Routes>
+          </HashRouter>
+        </ThemeProvider>
+      {/* </CartProvider> */}
     </AuthProvider>
   );
 }

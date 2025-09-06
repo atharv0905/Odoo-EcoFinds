@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFinds - Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <!-- Navbar will be inserted here by navbar.js -->
+    
+    <div class="container">
+        <div class="dashboard-container">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <h1>Discover Eco-Friendly Products</h1>
+                <p class="welcome-message">Welcome back, <span id="userName">User</span>!</p>
+            </div>
+
+            <!-- Dashboard Stats -->
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalProducts">0</div>
+                    <div class="stat-label">Available Products</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="cartItems">0</div>
+                    <div class="stat-label">Cart Items</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="userPoints">0</div>
+                    <div class="stat-label">Eco Points</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="purchaseCount">0</div>
+                    <div class="stat-label">Purchases</div>
+                </div>
+            </div>
+
+            <!-- Search & Filter Section -->
+            <div class="search-filter-section">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-category="all">All Products</button>
+                    <button class="filter-btn" data-category="Kitchen">Kitchen</button>
+                    <button class="filter-btn" data-category="Personal Care">Personal Care</button>
+                    <button class="filter-btn" data-category="Electronics">Electronics</button>
+                    <button class="filter-btn" data-category="Home & Garden">Home & Garden</button>
+                    <button class="filter-btn" data-category="Fashion">Fashion</button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Loading eco-friendly products...</p>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="productsGrid" class="products-grid">
+                <!-- Products will be loaded here dynamically -->
+            </div>
+
+            <!-- No Products Found Component -->
+            <div id="noProductsFound" class="no-products-found hidden">
+                <div class="no-products-content">
+                    <div class="no-products-icon">🌱</div>
+                    <h3>No Products Found</h3>
+                    <p>We couldn't find any eco-friendly products matching your criteria.</p>
+                    <p>Try adjusting your search or browse all categories.</p>
+                    <button class="btn btn-primary" onclick="clearFilters()">Show All Products</button>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="pagination-container hidden">
+                <button id="prevPage" class="btn btn-secondary">Previous</button>
+                <span id="pageInfo" class="page-info">Page 1 of 1</span>
+                <button id="nextPage" class="btn btn-secondary">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/api-service.js"></script>
+    <script src="../assets/js/auth-service.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+</body>
+</html>
