@@ -22,7 +22,7 @@ const sidebarItems: SidebarItem[] = [
   { id: "profile", label: "Profile", icon: IconUser, to: "/dashboard/profile" },
   { id: "listings", label: "My Listings", icon: IconPackage, to: "/dashboard/mylisting" },
   { id: "cart", label: "Cart", icon: IconShoppingCart, to: "/dashboard/cart" },
-  { id: "purchases", label: "Purchase History", icon: IconHistory, to: "/dashboard/purchases" },
+  { id: "purchases", label: "Purchase History", icon: IconHistory, to: "/dashboard/history" },
 ];
 
 import { NavUser } from '@/components/dashboard/navbar/nav-user'
@@ -50,7 +50,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <a href="#">
                 <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">ECOFinds.</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, HashRouter, Outlet } from 'react-router-dom';
+import { Routes, Route, HashRouter, Outlet, Link } from 'react-router-dom';
 import Home from '@/pages/home';
 
 import { ThemeProvider } from '@/components/theme-provider';
@@ -8,6 +8,9 @@ import Dashboard from './pages/dashboard';
 import Register from './pages/register';
 import { AuthProvider } from '@/hooks/auth-context.tsx';
 import MyListing from './pages/dashboard/mylisting';
+import { Cart } from './pages/dashboard/cart';
+import { ProfileSection } from './pages/dashboard/profile';
+import { PurchaseHistorySection } from './pages/dashboard/history';
 
 
 const Layout = () => {
@@ -67,6 +70,10 @@ function App(): React.JSX.Element {
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
               <Route path="dashboard/mylisting" element={<MyListing />} />
+              <Route path="*" element={<div>404 Not Found go to dashboard <Link to="/dashboard">here</Link></div>} />
+              <Route path='dashboard/cart' element={<Cart />} />
+              <Route path='dashboard/profile' element={<ProfileSection />} />
+              <Route path='dashboard/history' element={<PurchaseHistorySection />} />
             </Route>
           </Routes>
         </HashRouter>
