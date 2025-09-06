@@ -14,13 +14,14 @@ import { motion, AnimatePresence } from "framer-motion"
 // Product type inferred from API response
 
 
-interface ProductCardProps {
+export interface ProductCardProps {
   product: any;
   showActions?: boolean;
   onEdit?: (product: any) => void;
   onDelete?: (productId: string) => void;
+  onChange?: () => void;
 }
-export function ProductCard({ product, showActions = true }: ProductCardProps) {
+export function ProductCard({ product, showActions = true, onChange }: ProductCardProps) {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
@@ -136,6 +137,7 @@ export function ProductCard({ product, showActions = true }: ProductCardProps) {
                     if (!res.ok) throw new Error(await res.text());
                     setEditSuccess("Product updated!");
                     setEditOpen(false);
+                    if (onChange) onChange();
                   } catch (err: any) {
                     setEditError(err.message || "Failed to update product");
                   } finally {
@@ -220,11 +222,12 @@ export function ProductCard({ product, showActions = true }: ProductCardProps) {
                     const res = await fetch(`${import.meta.env.VITE_API_URL}api/products/${product._id}`, {
                       method: "DELETE",
                       headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ createdBy: product.createdBy?._id }),
+                      body: JSON.stringify({ createdBy: product.createdByFId }),
                     });
                     if (!res.ok) throw new Error(await res.text());
                     setDeleteSuccess("Product deleted!");
                     setDeleteOpen(false);
+                    if (onChange) onChange();
                   } catch (err: any) {
                     setDeleteError(err.message || "Failed to delete product");
                   } finally {

@@ -74,6 +74,7 @@ export const ListingsSection = () => {
             setFormSuccess("Product created successfully!");
             setOpen(false);
             if (formRef.current) formRef.current.reset();
+            setFormSuccess(Date.now().toString()); // trigger listings reload
         } catch (err: any) {
             setFormError(err.message || "Failed to create product");
         } finally {
@@ -138,7 +139,7 @@ export const ListingsSection = () => {
                     <div className="col-span-full text-center text-muted-foreground">No listings found.</div>
                 ) : (
                     listings.map((listing) => (
-                        <ProductCard key={listing.id} product={listing} />
+                        <ProductCard key={listing.id} product={listing} onChange={() => setFormSuccess(Date.now().toString())} />
                     ))
                 )}
             </div>
