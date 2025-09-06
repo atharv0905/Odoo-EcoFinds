@@ -1,23 +1,22 @@
 
 
-import { useAuth } from "@/hooks/use-auth-hook.ts"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, Mail, Lock } from "lucide-react"
-import { useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-
+import { useAuth } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, Mail, Lock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [error, setError] = useState("")
-    const [isLoading, setIsLoading] = useState(false)
-    const { user, login } = useAuth()
-    const navigate = useNavigate()
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const { user, login } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (user) {
@@ -25,40 +24,54 @@ function Login() {
         }
     }, [user, navigate]);
 
-
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setError("")
-        setIsLoading(true)
+        e.preventDefault();
+        setError("");
+        setIsLoading(true);
+
+        if (!email.trim()) {
+            setError("Please enter your email address");
+            setIsLoading(false);
+            return;
+        }
+        if (!password.trim()) {
+            setError("Please enter your password");
+            setIsLoading(false);
+            return;
+        }
 
         try {
-            if (!email.trim()) {
-                setError("Please enter your email address")
-                setIsLoading(false)
-                return
-            }
-
-            if (!password.trim()) {
-                setError("Please enter your password")
-                setIsLoading(false)
-                return
-            }
-
-            const result = await login(email, password)
-            if (result.success) {
-                navigate("/dashboard")
+            const result = await login(email, password);
+            if (result) {
+                navigate("/dashboard");
             } else {
-                setError(result.error || "Login failed")
+                setError("Login failed");
             }
-        } catch (err) {
-            setError("An unexpected error occurred")
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("An unexpected error occurred");
+            }
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
     if (user) {
-        return null // Will redirect via useEffect
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+                <Card className="w-full max-w-md">
+                    <CardHeader className="space-y-1">
+                        <CardTitle className="text-2xl font-bold text-center">Redirecting...</CardTitle>
+                        <CardDescription className="text-center">You are already logged in. Redirecting to dashboard...</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex items-center justify-center">
+                        <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
+                    </CardContent>
+                </Card>
+            </div>
+        );
     }
 
     return (
@@ -119,16 +132,17 @@ function Login() {
                                 "Sign in"
                             )}
                         </Button>
-                        <p className="text-sm text-center text-muted-foreground">
+                        <span className="text-sm text-center text-muted-foreground">
                             Don't have an account?{" "}
                             <Link to="/register" className="text-primary hover:underline font-medium">
                                 Sign up
                             </Link>
-                        </p>
+                        </span>
                     </CardFooter>
                 </form>
             </Card>
         </div>
-    )
+    );
 }
-export default Login
+
+export default Login;
