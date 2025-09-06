@@ -80,6 +80,44 @@ npm run dev
 
 The server will run on `http://localhost:5000`
 
+## 🌐 CORS Configuration
+
+The API is configured to accept requests from **any domain** without CORS issues:
+
+### ✅ **What's Allowed:**
+- **All Origins**: Any domain can make requests to the API
+- **All Methods**: GET, POST, PUT, DELETE, PATCH, OPTIONS
+- **All Headers**: Content-Type, Authorization, etc.
+- **Preflight Requests**: Automatically handled for complex requests
+- **File Uploads**: Multipart/form-data requests supported
+
+### 🔧 **Frontend Integration:**
+No special CORS configuration needed on the frontend. You can call the API from:
+- `localhost:3000` (React/Vue/Angular dev servers)
+- `file://` protocols (Electron apps)
+- Any production domain
+- Mobile apps (React Native, Flutter, etc.)
+
+### 📝 **Example Frontend Usage:**
+```javascript
+// This will work from any domain
+fetch('http://localhost:5000/api/products/', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    title: 'Test Product',
+    description: 'Test Description',
+    category: 'Test',
+    price: 10.99,
+    createdBy: 'user123'
+  })
+})
+.then(response => response.json())
+.then(data => console.log(data));
+```
+
 ## 📚 API Documentation
 
 ### Base URL
@@ -1032,6 +1070,11 @@ Common HTTP status codes:
   - Automatic image optimization (800x800 max, auto quality, auto format)
   - Automatic cleanup when products/images are deleted
   - 5MB file size limit per image, supported formats: JPG, JPEG, PNG, WEBP, GIF
+- **CORS Configuration**: 
+  - **Allows requests from any domain** (`origin: '*'`)
+  - Supports all HTTP methods (GET, POST, PUT, DELETE, PATCH, OPTIONS)
+  - Handles preflight requests automatically
+  - No credentials required for cross-origin requests
 - **Smart Search**: Advanced search with text indexing, pagination, and regex fallback
 - **No Authentication**: No authentication required (for now)
 - **Role-based System**: Admin vs user roles for future privilege differentiation
