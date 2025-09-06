@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFinds - Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h1>EcoFinds Dashboard</h1>
+                <p class="welcome-message">Welcome back, <span id="userName">User</span>!</p>
+            </div>
+            
+            <div class="dashboard-content">
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-value">24</div>
+                        <div class="stat-label">Eco Products</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Saved Items</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">Categories</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">156</div>
+                        <div class="stat-label">Points Earned</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: left;">
+                    <h3 style="margin-bottom: 1rem; color: #333;">Recent Activity</h3>
+                    <div style="background: rgba(255,255,255,0.5); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                        <p style="margin-bottom: 0.5rem;"><strong>🌱 New eco-friendly product added:</strong> Bamboo Water Bottle</p>
+                        <small style="color: #666;">2 hours ago</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.5); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
+                        <p style="margin-bottom: 0.5rem;"><strong>🏆 Achievement unlocked:</strong> First Product Listed</p>
+                        <small style="color: #666;">1 day ago</small>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.5); padding: 1rem; border-radius: 10px;">
+                        <p style="margin-bottom: 0.5rem;"><strong>💚 You saved 2.4kg CO2</strong> with your recent purchases</p>
+                        <small style="color: #666;">3 days ago</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <button class="btn btn-primary" style="flex: 1;" onclick="alert('Feature coming soon!')">Browse Products</button>
+                <button class="btn btn-secondary" style="flex: 1;" onclick="alert('Feature coming soon!')">Add Product</button>
+            </div>
+            
+            <div style="margin-top: 1rem;">
+                <button class="btn btn-secondary" id="logoutBtn">
+                    <span id="logoutText">Sign Out</span>
+                    <div id="logoutLoading" class="loading hidden"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/auth-service.js"></script>
+    <script src="../assets/js/dashboard.js"></script>
+</body>
+</html>
