@@ -1,35 +1,66 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/electron-vite.animate.svg'
-import './App.css'
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, HashRouter, Outlet, Link } from 'react-router-dom';
+import Home from '@/pages/home';
+import Header from '@/components/headercontrol';
+import { ThemeProvider } from '@/components/theme-provider';
 
-function App() {
-  const [count, setCount] = useState(0)
+
+
+const Layout = () => {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://electron-vite.github.io" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="min-h-screen flex flex-col">
+      <Header />
+
+      {!isOnline ? (
+        <div className="flex-1 flex items-center justify-center bg-red-600 text-white text-center flex-col p-4">
+          <h1 className="text-3xl font-bold mb-2">You're Offline</h1>
+          <p className="text-lg">Please check your internet connection.</p>
+        </div>
+      ) : (
+        <>
+          <nav className="pt-10 px-4">
+            <Link to="/" className="mr-4 text-blue-600 hover:underline">Home</Link>
+            {/* <Link to="/work" className="text-blue-600 hover:underline">Work</Link> */}
+          </nav>
+          <main className="p-4 flex-1">
+            <Outlet />
+          </main>
+          {/* <Outlet /> */}
+        </>
+      )}
+    </div>
+  );
+};
+
+
+
+function App(): React.JSX.Element {
+  return (
+    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+      <HashRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+          </Route>
+        </Routes>
+      </HashRouter>
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;

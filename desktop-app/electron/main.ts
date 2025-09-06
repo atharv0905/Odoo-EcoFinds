@@ -28,8 +28,23 @@ let win: BrowserWindow | null
 
 function createWindow() {
   win = new BrowserWindow({
+    width: 900,
+    height: 670,
+    autoHideMenuBar: true,
+    darkTheme: true,
+    title: 'JyAnime',
+    titleBarStyle: 'hidden',
+    titleBarOverlay: {
+      color: '#00000000',
+      symbolColor: '#ffffff',
+      height: 40
+    },
+    trafficLightPosition: { x: 10, y: 10 },
+
+
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
     webPreferences: {
+      webSecurity: false,
       preload: path.join(__dirname, 'preload.mjs'),
     },
   })
