@@ -3,7 +3,7 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { useAuth } from "@/hooks/use-auth-hook.ts"
+import { useAuth } from "@/hooks/use-auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -66,11 +66,31 @@ function Register() {
 
     try {
       const result = await register(email, password, displayName)
-      if (result.success) {
+      console.log("Registration result:", result)
+      if (result) {
+        // Call API to create user in backend
+        try {
+          console.log("Creating user in backend:", { email, name: displayName })
+          await fetch(`${import.meta.env.VITE_API_URL}api/users/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email,
+              name: displayName,
+              firebaseId: result.uid,
+            }),
+          })
+          console.log("User created in backend successfully")
+        } catch (apiErr) {
+          // Optionally log or show error, but don't block registration
+          console.error("Failed to create user in backend:", apiErr)
+        }
         setSuccess("Account created successfully! Redirecting to dashboard...")
         // The auth state change will handle the redirect
       } else {
-        setError(result.error || "Registration failed")
+        setError("Registration failed")
       }
     } catch (err) {
       setError("An unexpected error occurred")

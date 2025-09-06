@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, HashRouter, Outlet, Link } from 'react-router-dom';
+import { Routes, Route, HashRouter, Outlet } from 'react-router-dom';
 import Home from '@/pages/home';
-import Header from '@/components/headercontrol';
+
 import { ThemeProvider } from '@/components/theme-provider';
 import Login from './pages/login';
 import Dashboard from './pages/dashboard';
 import Register from './pages/register';
-import { AuthProvider } from '@/hooks/use-auth';
+import { AuthProvider } from '@/hooks/auth-context.tsx';
+import MyListing from './pages/dashboard/mylisting';
 
 
 const Layout = () => {
@@ -27,7 +28,7 @@ const Layout = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      {/* <Header /> */}
 
       {!isOnline ? (
         <div className="flex-1 flex items-center justify-center bg-red-600 text-white text-center flex-col p-4">
@@ -36,17 +37,16 @@ const Layout = () => {
         </div>
       ) : (
         <>
-          <nav className="pt-10 px-4">
+          {/* <nav className="pt-10 px-4">
             <Link to="/" className="mr-4 text-blue-600 hover:underline">Home</Link>
-            {/* <Link to="/work" className="text-blue-600 hover:underline">Work</Link> */}
             <Link to="/dashboard" className="text-blue-600 hover:underline">Dashboard</Link>
             <Link to="/login" className="ml-4 text-blue-600 hover:underline">Login</Link>
             <Link to="/register" className="ml-4 text-blue-600 hover:underline">Register</Link>
           </nav>
           <main className="p-4 flex-1">
             <Outlet />
-          </main>
-          {/* <Outlet /> */}
+          </main> */}
+          <Outlet />
         </>
       )}
     </div>
@@ -66,6 +66,7 @@ function App(): React.JSX.Element {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
+              <Route path="dashboard/mylisting" element={<MyListing />} />
             </Route>
           </Routes>
         </HashRouter>

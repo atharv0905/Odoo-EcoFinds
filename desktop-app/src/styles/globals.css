@@ -122,7 +122,6 @@
   }
 }
 
-
 .drag {
   -webkit-app-region: drag;
 }
@@ -137,7 +136,7 @@
 ::-webkit-scrollbar-track {
   background: var(--card);
 }
- 
+
 ::-webkit-scrollbar-thumb {
   @apply rounded-full;  
   background: #888; 
@@ -145,4 +144,13 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #555; 
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
