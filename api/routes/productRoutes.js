@@ -1,26 +1,84 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
+const { upload, uploadMultipleImages, deleteFromCloudinary } = require('../config/cloudinary');
 
-// Create product
-router.post('/', async (req, res) => {
+// Create product with image uploads
+router.post('/', upload.array('images', 5), async (req, res) => {
   try {
-    const { title, description, category, price, image, createdBy, stock = 0 } = req.body;
+    const { title, description, category, price, createdBy, stock = 0 } = req.body;
+
+    // Validate required fields
+    if (!title || !description || !category || !price || !createdBy) {
+      return res.status(400).json({ 
+        error: 'Title, description, category, price, and createdBy are required' 
+      });
+    }
+
+    // Validate that at least one image is uploaded
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ 
+        error: 'At least one product image is required' 
+      });
+    }
+
+    // Upload images to Cloudinary first
+    const uploadedImages = await uploadMultipleImages(req.files);
 
     const product = new Product({
       title,
       description,
       category,
-      price,
-      image,
+      price: parseFloat(price),
+      images: uploadedImages,
       createdBy,
-      stock,
-      isActive: stock > 0
+      stock: parseInt(stock),
+      isActive: parseInt(stock) > 0
     });
 
     const savedProduct = await product.save();
     res.status(201).json({
-      message: 'Product created successfully',
+      message: 'Product created successfully with images',
+      product: savedProduct,
+      imageCount: uploadedImages.length
+    });
+  } catch (error) {
+    // If product creation fails, clean up uploaded images
+    if (req.uploadedImages) {
+      try {
+        await Promise.all(
+          req.uploadedImages.map(img => deleteFromCloudinary(img.publicId))
+        );
+      } catch (cleanupError) {
+        console.error('Error cleaning up images:', cleanupError);
+      }
+    }
+    
+    res.status(400).json({ 
+      error: error.message 
+    });
+  }
+});
+
+// Create product without images (legacy support)
+router.post('/no-images', async (req, res) => {
+  try {
+    const { title, description, category, price, createdBy, stock = 0 } = req.body;
+
+    const product = new Product({
+      title,
+      description,
+      category,
+      price: parseFloat(price),
+      images: [], // Empty images array
+      createdBy,
+      stock: parseInt(stock),
+      isActive: parseInt(stock) > 0
+    });
+
+    const savedProduct = await product.save();
+    res.status(201).json({
+      message: 'Product created successfully without images',
       product: savedProduct
     });
   } catch (error) {
@@ -33,7 +91,7 @@ router.post('/', async (req, res) => {
 // Update product (owners can update their product details)
 router.put('/:id', async (req, res) => {
   try {
-    const { title, description, category, price, image, createdBy, stock } = req.body;
+    const { title, description, category, price, createdBy, stock } = req.body;
     
     // Get current product to verify ownership
     const currentProduct = await Product.findById(req.params.id);
@@ -54,11 +112,10 @@ router.put('/:id', async (req, res) => {
     if (title) updateData.title = title;
     if (description) updateData.description = description;
     if (category) updateData.category = category;
-    if (price !== undefined) updateData.price = price;
-    if (image) updateData.image = image;
+    if (price !== undefined) updateData.price = parseFloat(price);
     if (stock !== undefined) {
-      updateData.stock = stock;
-      updateData.isActive = stock > 0;
+      updateData.stock = parseInt(stock);
+      updateData.isActive = parseInt(stock) > 0;
     }
 
     const product = await Product.findByIdAndUpdate(
@@ -78,20 +135,221 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// Add images to existing product
+router.post('/:id/images', upload.array('images', 5), async (req, res) => {
+  try {
+    const { createdBy } = req.body;
+    
+    // Get current product to verify ownership
+    const currentProduct = await Product.findById(req.params.id);
+    if (!currentProduct) {
+      return res.status(404).json({ 
+        error: 'Product not found' 
+      });
+    }
+
+    // Verify ownership
+    if (createdBy && currentProduct.createdBy !== createdBy) {
+      return res.status(403).json({ 
+        error: 'You can only add images to your own products' 
+      });
+    }
+
+    // Validate that images are uploaded
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ 
+        error: 'At least one image is required' 
+      });
+    }
+
+    // Check if adding these images would exceed the limit (max 10 images per product)
+    const totalImages = currentProduct.images.length + req.files.length;
+    if (totalImages > 10) {
+      return res.status(400).json({ 
+        error: `Cannot exceed 10 images per product. Current: ${currentProduct.images.length}, Trying to add: ${req.files.length}` 
+      });
+    }
+
+    // Upload new images to Cloudinary
+    const uploadedImages = await uploadMultipleImages(req.files);
+
+    // Add new images to existing images array
+    const updatedImages = [...currentProduct.images, ...uploadedImages];
+
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      { images: updatedImages },
+      { new: true, runValidators: true }
+    );
+
+    res.json({
+      message: 'Images added successfully',
+      product,
+      newImagesCount: uploadedImages.length,
+      totalImagesCount: updatedImages.length
+    });
+  } catch (error) {
+    res.status(400).json({ 
+      error: error.message 
+    });
+  }
+});
+
+// Delete specific image from product
+router.delete('/:id/images/:imageId', async (req, res) => {
+  try {
+    const { createdBy } = req.body;
+    const { imageId } = req.params;
+    
+    // Get current product to verify ownership
+    const currentProduct = await Product.findById(req.params.id);
+    if (!currentProduct) {
+      return res.status(404).json({ 
+        error: 'Product not found' 
+      });
+    }
+
+    // Verify ownership
+    if (createdBy && currentProduct.createdBy !== createdBy) {
+      return res.status(403).json({ 
+        error: 'You can only delete images from your own products' 
+      });
+    }
+
+    // Find the image to delete
+    const imageToDelete = currentProduct.images.find(img => img._id.toString() === imageId);
+    if (!imageToDelete) {
+      return res.status(404).json({ 
+        error: 'Image not found' 
+      });
+    }
+
+    // Delete from Cloudinary
+    await deleteFromCloudinary(imageToDelete.publicId);
+
+    // Remove image from product's images array
+    const updatedImages = currentProduct.images.filter(img => img._id.toString() !== imageId);
+
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      { images: updatedImages },
+      { new: true, runValidators: true }
+    );
+
+    res.json({
+      message: 'Image deleted successfully',
+      product,
+      remainingImagesCount: updatedImages.length
+    });
+  } catch (error) {
+    res.status(400).json({ 
+      error: error.message 
+    });
+  }
+});
+
+// Replace all images for a product
+router.put('/:id/images', upload.array('images', 5), async (req, res) => {
+  try {
+    const { createdBy } = req.body;
+    
+    // Get current product to verify ownership
+    const currentProduct = await Product.findById(req.params.id);
+    if (!currentProduct) {
+      return res.status(404).json({ 
+        error: 'Product not found' 
+      });
+    }
+
+    // Verify ownership
+    if (createdBy && currentProduct.createdBy !== createdBy) {
+      return res.status(403).json({ 
+        error: 'You can only update images for your own products' 
+      });
+    }
+
+    // Validate that images are uploaded
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ 
+        error: 'At least one image is required' 
+      });
+    }
+
+    // Upload new images to Cloudinary
+    const uploadedImages = await uploadMultipleImages(req.files);
+
+    // Delete old images from Cloudinary
+    if (currentProduct.images && currentProduct.images.length > 0) {
+      try {
+        await Promise.all(
+          currentProduct.images.map(img => deleteFromCloudinary(img.publicId))
+        );
+      } catch (deleteError) {
+        console.error('Error deleting old images:', deleteError);
+        // Continue with update even if some deletions fail
+      }
+    }
+
+    // Update product with new images
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      { images: uploadedImages },
+      { new: true, runValidators: true }
+    );
+
+    res.json({
+      message: 'Product images updated successfully',
+      product,
+      imageCount: uploadedImages.length
+    });
+  } catch (error) {
+    res.status(400).json({ 
+      error: error.message 
+    });
+  }
+});
+
 // Delete product
 router.delete('/:id', async (req, res) => {
   try {
-    const product = await Product.findByIdAndDelete(req.params.id);
+    const { createdBy } = req.body;
     
+    const product = await Product.findById(req.params.id);
     if (!product) {
       return res.status(404).json({ 
         error: 'Product not found' 
       });
     }
 
+    // Verify ownership
+    if (createdBy && product.createdBy !== createdBy) {
+      return res.status(403).json({ 
+        error: 'You can only delete your own products' 
+      });
+    }
+
+    // Delete all images from Cloudinary
+    if (product.images && product.images.length > 0) {
+      try {
+        await Promise.all(
+          product.images.map(img => deleteFromCloudinary(img.publicId))
+        );
+      } catch (deleteError) {
+        console.error('Error deleting images from Cloudinary:', deleteError);
+        // Continue with product deletion even if some image deletions fail
+      }
+    }
+
+    // Delete the product
+    await Product.findByIdAndDelete(req.params.id);
+
     res.json({
-      message: 'Product deleted successfully',
-      product
+      message: 'Product and all associated images deleted successfully',
+      product: {
+        _id: product._id,
+        title: product.title,
+        deletedImages: product.images?.length || 0
+      }
     });
   } catch (error) {
     res.status(400).json({ 
