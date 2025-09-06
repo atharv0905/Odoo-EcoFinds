@@ -23,10 +23,20 @@ const productSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
-  image: {
-    type: String,
-    required: false
-  },
+  images: [{
+    url: {
+      type: String,
+      required: true
+    },
+    publicId: {
+      type: String,
+      required: true
+    },
+    alt: {
+      type: String,
+      default: ''
+    }
+  }],
   createdBy: {
     type: String,
     required: true,
