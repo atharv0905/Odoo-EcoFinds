@@ -218,7 +218,8 @@ GET /health
   "category": "Kitchen",
   "price": 25.99,
   "image": "https://example.com/image.jpg",
-  "createdBy": "64f8a1b2c3d4e5f6a7b8c9d0"
+  "createdBy": "64f8a1b2c3d4e5f6a7b8c9d0",
+  "stock": 50
 }
 ```
 
@@ -241,9 +242,49 @@ GET /health
 
 ### Get All Products
 **Endpoint:** `GET /api/products/`
+**Description:** Get all active products with stock > 0
 
 ### Get Product by ID
 **Endpoint:** `GET /api/products/:id`
+
+### Update Product Stock
+**Endpoint:** `PATCH /api/products/:id/stock`
+**Description:** Update product stock quantity (owner only)
+
+**Request Body:**
+```json
+{
+  "stock": 25,
+  "createdBy": "64f8a1b2c3d4e5f6a7b8c9d0"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Product stock updated successfully",
+  "product": {
+    "_id": "64f8a1b2c3d4e5f6a7b8c9d1",
+    "title": "Eco-Friendly Water Bottle",
+    "stock": 25,
+    "isActive": true,
+    ...
+  }
+}
+```
+
+### Get All Products for Management
+**Endpoint:** `GET /api/products/all/management`
+**Description:** Get all products including inactive ones (for admin/management)
+
+**Response:**
+```json
+{
+  "message": "All products retrieved successfully",
+  "products": [...],
+  "count": 150
+}
+```
 
 ### Update Product
 **Endpoint:** `PUT /api/products/:id`
@@ -419,6 +460,173 @@ GET /health
 
 ---
 
+## 🛍️ Product Order Management (New)
+
+The Product Order system manages individual orders between buyers and sellers, with stock management and order tracking.
+
+### Create Product Order
+**Endpoint:** `POST /api/product-orders/`
+**Description:** Create a new order for a specific product (automatically reduces stock)
+
+**Request Body:**
+```json
+{
+  "productId": "64f8a1b2c3d4e5f6a7b8c9d1",
+  "sellerId": "64f8a1b2c3d4e5f6a7b8c9d0",
+  "buyerId": "64f8a1b2c3d4e5f6a7b8c9d2",
+  "quantity": 2,
+  "shippingAddress": {
+    "street": "123 Main St",
+    "city": "Anytown",
+    "state": "AS",
+    "zipCode": "12345",
+    "country": "USA"
+  },
+  "notes": "Please handle with care"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Order placed successfully",
+  "order": {
+    "_id": "64f8a1b2c3d4e5f6a7b8c9d4",
+    "productId": "64f8a1b2c3d4e5f6a7b8c9d1",
+    "sellerId": "64f8a1b2c3d4e5f6a7b8c9d0",
+    "buyerId": "64f8a1b2c3d4e5f6a7b8c9d2",
+    "quantity": 2,
+    "unitPrice": 25.99,
+    "totalPrice": 51.98,
+    "status": "pending",
+    "orderDate": "2023-10-15T10:30:00.000Z",
+    "shippingAddress": { ... },
+    "notes": "Please handle with care"
+  }
+}
+```
+
+### Get Seller Orders
+**Endpoint:** `GET /api/product-orders/seller/:sellerId`
+**Description:** Get all orders for products sold by a specific seller
+
+**Query Parameters:**
+- `status` (optional): Filter by order status (pending, confirmed, shipped, delivered, cancelled)
+
+**Response:**
+```json
+{
+  "message": "Seller orders retrieved successfully",
+  "orders": [...],
+  "summary": {
+    "totalOrders": 15,
+    "totalRevenue": 1299.85,
+    "pendingOrders": 3
+  }
+}
+```
+
+### Get Buyer Orders
+**Endpoint:** `GET /api/product-orders/buyer/:buyerId`
+**Description:** Get all orders placed by a specific buyer
+
+**Query Parameters:**
+- `status` (optional): Filter by order status
+
+**Response:**
+```json
+{
+  "message": "Buyer orders retrieved successfully",
+  "orders": [...],
+  "count": 8
+}
+```
+
+### Get Orders for Specific Product
+**Endpoint:** `GET /api/product-orders/product/:productId`
+
+**Response:**
+```json
+{
+  "message": "Product orders retrieved successfully",
+  "orders": [...],
+  "count": 4
+}
+```
+
+### Get Order by ID
+**Endpoint:** `GET /api/product-orders/:id`
+
+**Response:**
+```json
+{
+  "message": "Order retrieved successfully",
+  "order": {
+    "_id": "64f8a1b2c3d4e5f6a7b8c9d4",
+    "productId": {
+      "title": "Eco-Friendly Water Bottle",
+      "image": "...",
+      "category": "Kitchen"
+    },
+    "quantity": 2,
+    "status": "pending",
+    ...
+  }
+}
+```
+
+### Update Order Status
+**Endpoint:** `PATCH /api/product-orders/:id/status`
+**Description:** Update order status (seller only)
+
+**Request Body:**
+```json
+{
+  "status": "confirmed",
+  "sellerId": "64f8a1b2c3d4e5f6a7b8c9d0"
+}
+```
+
+**Valid Status Values:**
+- `pending` → `confirmed` → `shipped` → `delivered`
+- `cancelled` (can be set from pending or confirmed)
+
+### Cancel Order
+**Endpoint:** `PATCH /api/product-orders/:id/cancel`
+**Description:** Cancel an order (buyer or seller can cancel, restores stock)
+
+**Request Body:**
+```json
+{
+  "userId": "64f8a1b2c3d4e5f6a7b8c9d0",
+  "reason": "Changed mind"
+}
+```
+
+### Get Seller Statistics
+**Endpoint:** `GET /api/product-orders/seller/:sellerId/stats`
+
+**Response:**
+```json
+{
+  "message": "Seller statistics retrieved successfully",
+  "stats": {
+    "totalOrders": 25,
+    "totalRevenue": 1599.75,
+    "averageOrderValue": 63.99,
+    "statusBreakdown": {
+      "pending": 3,
+      "confirmed": 5,
+      "shipped": 8,
+      "delivered": 7,
+      "cancelled": 2
+    }
+  }
+}
+```
+
+---
+
 ## 🧪 Example API Calls
 
 ### Using cURL
@@ -541,6 +749,31 @@ fetch('http://localhost:5000/api/users/USER_ID_HERE', {
 - `category`
 - `createdBy`
 - Compound index: `{ category: 1, title: 1 }`
+- Compound index: `{ isActive: 1, stock: 1 }`
+
+### Product Model Fields (Updated)
+- `stock`: Number (default: 0) - Available quantity
+- `isActive`: Boolean (default: true) - Product visibility
+- `totalSold`: Number (default: 0) - Total units sold
+- `views`: Number (default: 0) - Product view count
+
+### ProductOrder Model Indexes
+- `sellerId` with `createdAt` (for seller order queries)
+- `buyerId` with `createdAt` (for buyer order queries)
+- `productId` with `createdAt` (for product-specific orders)
+- `status` (for filtering by order status)
+
+### ProductOrder Model Fields
+- `productId`: ObjectId (ref: Product)
+- `sellerId`: String - Product owner
+- `buyerId`: String - Order placer
+- `quantity`: Number (min: 1)
+- `unitPrice`: Number - Price per unit at time of order
+- `totalPrice`: Number - Calculated total (quantity × unitPrice)
+- `status`: String - pending|confirmed|shipped|delivered|cancelled
+- `orderDate`: Date (default: now)
+- `shippingAddress`: Object with address details
+- `notes`: String (optional)
 
 ### Cart Model Indexes
 - `userId`

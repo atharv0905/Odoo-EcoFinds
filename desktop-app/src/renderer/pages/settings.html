@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFinds - Settings</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <!-- Navbar will be inserted here by navbar.js -->
+    
+    <div class="container">
+        <div class="settings-container">
+            <!-- Settings Header -->
+            <div class="settings-header">
+                <h1>Settings</h1>
+                <p class="settings-subtitle">Manage your account preferences and payment configuration</p>
+            </div>
+
+            <!-- Profile Settings Section -->
+            <div class="settings-section">
+                <h2 class="section-title">
+                    <span class="section-icon">👤</span>
+                    Profile Information
+                </h2>
+                <div class="settings-card">
+                    <form id="profileForm">
+                        <div class="form-group">
+                            <label for="displayName">Full Name</label>
+                            <input type="text" id="displayName" name="displayName" placeholder="Enter your full name">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" readonly disabled placeholder="Your email address">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" id="saveProfileBtn">
+                            <span id="saveProfileText">Save Profile</span>
+                            <div id="saveProfileLoading" class="loading hidden"></div>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Payment Configuration Section -->
+            <div class="settings-section">
+                <h2 class="section-title">
+                    <span class="section-icon">💳</span>
+                    Payment Configuration
+                </h2>
+                <div class="settings-card">
+                    <div class="payment-options">
+                        <div class="payment-option">
+                            <input type="radio" id="manualPayout" name="paymentMode" value="manual_payout" checked>
+                            <label for="manualPayout" class="payment-option-label">
+                                <div class="payment-option-content">
+                                    <h3>Manual Payout</h3>
+                                    <p>Receive payments manually through bank transfers or other methods.</p>
+                                    <div class="payment-features">
+                                        <span class="feature">✓ Simple setup</span>
+                                        <span class="feature">✓ No integration required</span>
+                                        <span class="feature">✓ Manual processing</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="payment-option">
+                            <input type="radio" id="razorpayDirect" name="paymentMode" value="razorpay_direct">
+                            <label for="razorpayDirect" class="payment-option-label">
+                                <div class="payment-option-content">
+                                    <h3>Razorpay Integration</h3>
+                                    <p>Connect your Razorpay account for automated payments.</p>
+                                    <div class="payment-features">
+                                        <span class="feature">✓ Automatic processing</span>
+                                        <span class="feature">✓ Real-time payments</span>
+                                        <span class="feature">✓ Advanced analytics</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Razorpay Configuration (hidden by default) -->
+                    <div id="razorpayConfig" class="razorpay-config hidden">
+                        <div class="config-warning">
+                            <div class="warning-icon">⚠️</div>
+                            <div class="warning-content">
+                                <h4>Security Notice</h4>
+                                <p>Your Razorpay credentials will be securely hashed before storage. We recommend using test credentials for development.</p>
+                            </div>
+                        </div>
+
+                        <form id="razorpayForm">
+                            <div class="form-group">
+                                <label for="razorpayKeyId">Razorpay Key ID</label>
+                                <input type="text" id="razorpayKeyId" name="razorpayKeyId" placeholder="rzp_test_xxxxxxxxxxxxxxx">
+                                <small class="form-help">Your Razorpay Key ID (starts with rzp_)</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="razorpaySecret">Razorpay Secret</label>
+                                <input type="password" id="razorpaySecret" name="razorpaySecret" placeholder="Enter your Razorpay secret">
+                                <small class="form-help">Your Razorpay Secret Key (will be hashed)</small>
+                            </div>
+                        </form>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" id="savePaymentBtn">
+                        <span id="savePaymentText">Save Payment Configuration</span>
+                        <div id="savePaymentLoading" class="loading hidden"></div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Gamification Settings Section -->
+            <div class="settings-section">
+                <h2 class="section-title">
+                    <span class="section-icon">🏆</span>
+                    Gamification & Rewards
+                </h2>
+                <div class="settings-card">
+                    <div class="gamification-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Current Level</div>
+                            <div class="stat-value" id="userLevel">1</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Eco Points</div>
+                            <div class="stat-value" id="userPoints">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Badges Earned</div>
+                            <div class="stat-value" id="userBadges">0</div>
+                        </div>
+                    </div>
+
+                    <div class="badges-container">
+                        <h4>Your Badges</h4>
+                        <div id="badgesList" class="badges-list">
+                            <!-- Badges will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Actions Section -->
+            <div class="settings-section">
+                <h2 class="section-title">
+                    <span class="section-icon">⚙️</span>
+                    Account Actions
+                </h2>
+                <div class="settings-card">
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" id="refreshDataBtn">
+                            <span class="btn-icon">🔄</span>
+                            Refresh Data
+                        </button>
+                        
+                        <button class="btn btn-warning" id="clearCacheBtn">
+                            <span class="btn-icon">🗑️</span>
+                            Clear Cache
+                        </button>
+                        
+                        <button class="btn btn-danger" id="signOutBtn">
+                            <span class="btn-icon">🚪</span>
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message Display -->
+            <div id="settingsMessage" class="settings-message hidden">
+                <div class="message-content">
+                    <span class="message-text"></span>
+                    <button class="message-close" onclick="hideSettingsMessage()">×</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/api-service.js"></script>
+    <script src="../assets/js/auth-service.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/settings.js"></script>
+</body>
+</html>

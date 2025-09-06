@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFinds - Shopping Cart</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <!-- Navbar will be inserted here by navbar.js -->
+    
+    <div class="container">
+        <div class="cart-container">
+            <!-- Cart Header -->
+            <div class="cart-header">
+                <h1>🛒 Your Shopping Cart</h1>
+                <p class="cart-subtitle">Review your eco-friendly selections</p>
+            </div>
+
+            <!-- Loading State -->
+            <div id="cartLoading" class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Loading your cart...</p>
+            </div>
+
+            <!-- Cart Content -->
+            <div id="cartContent" class="cart-content hidden">
+                
+                <!-- Cart Items -->
+                <div class="cart-items">
+                    <div class="cart-items-header">
+                        <h2>Items in Your Cart</h2>
+                        <span id="cartItemCount" class="item-count">0 items</span>
+                    </div>
+                    
+                    <div id="cartItemsList" class="cart-items-list">
+                        <!-- Cart items will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Cart Summary -->
+                <div class="cart-summary">
+                    <div class="summary-card">
+                        <h3>Order Summary</h3>
+                        
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span id="subtotal">$0.00</span>
+                        </div>
+                        
+                        <div class="summary-row">
+                            <span>Shipping:</span>
+                            <span id="shipping">Free</span>
+                        </div>
+                        
+                        <div class="summary-row">
+                            <span>Eco Impact Bonus:</span>
+                            <span id="ecoBonus" class="eco-bonus">+10 points</span>
+                        </div>
+                        
+                        <div class="summary-divider"></div>
+                        
+                        <div class="summary-row total-row">
+                            <span>Total:</span>
+                            <span id="total">$0.00</span>
+                        </div>
+
+                        <div class="cart-actions">
+                            <button id="checkoutBtn" class="btn btn-primary checkout-btn">
+                                <span id="checkoutText">Proceed to Checkout</span>
+                                <div id="checkoutLoading" class="loading hidden"></div>
+                            </button>
+                            
+                            <button id="clearCartBtn" class="btn btn-secondary clear-btn">
+                                Clear Cart
+                            </button>
+                        </div>
+
+                        <div class="eco-impact">
+                            <div class="eco-impact-icon">🌱</div>
+                            <div class="eco-impact-content">
+                                <h4>Eco Impact</h4>
+                                <p>By choosing these products, you're helping reduce carbon footprint and supporting sustainable practices!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty Cart State -->
+            <div id="emptyCart" class="empty-cart hidden">
+                <div class="empty-cart-content">
+                    <div class="empty-cart-icon">🛒</div>
+                    <h3>Your cart is empty</h3>
+                    <p>Discover amazing eco-friendly products and add them to your cart!</p>
+                    <button class="btn btn-primary" onclick="window.location.href='dashboard.html'">
+                        Browse Products
+                    </button>
+                </div>
+            </div>
+
+            <!-- Continue Shopping -->
+            <div class="continue-shopping">
+                <a href="dashboard.html" class="continue-link">
+                    ← Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Confirm Action</h3>
+            <p id="confirmMessage">Are you sure?</p>
+            <div class="modal-actions">
+                <button id="confirmYes" class="btn btn-primary">Yes</button>
+                <button id="confirmNo" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/api-service.js"></script>
+    <script src="../assets/js/auth-service.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/cart.js"></script>
+</body>
+</html>
