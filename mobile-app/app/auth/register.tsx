@@ -41,7 +41,7 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       await signUp(email, password, displayName);
-      router.replace("/(tabs)");
+      router.replace("/(tabs)/");
     } catch (error: any) {
       Alert.alert(
         "Registration Error",

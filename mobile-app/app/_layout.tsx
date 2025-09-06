@@ -12,7 +12,9 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { AuthProvider, useAuth } from "../contexts/AuthContext";
+import { ApiUserProvider } from "../contexts/ApiUserContext";
 import LoadingScreen from "../components/LoadingScreen";
+import Toast from "react-native-toast-message";
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
@@ -21,11 +23,11 @@ function RootLayoutNav() {
   useEffect(() => {
     if (!loading) {
       if (user) {
-        // User is authenticated, show welcome screen first
-        router.replace("/welcome");
+        // User is authenticated, go to dashboard
+        router.replace({ pathname: "/(tabs)" });
       } else {
         // User is not authenticated, show login screen
-        router.replace("/auth/login");
+        router.replace({ pathname: "/auth/login" });
       }
     }
   }, [user, loading]);
@@ -60,7 +62,10 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <RootLayoutNav />
+      <ApiUserProvider>
+        <RootLayoutNav />
+        <Toast />
+      </ApiUserProvider>
     </AuthProvider>
   );
 }
