@@ -56,6 +56,20 @@ class AuthService {
         });
       }
       
+      // Create user in backend database
+      try {
+        if (window.apiService) {
+          await window.apiService.createUser({
+            email: email,
+            name: displayName || userCredential.user.displayName || 'User'
+          });
+          console.log('User created in backend database');
+        }
+      } catch (apiError) {
+        console.warn('Failed to create user in backend database:', apiError.message);
+        // Don't fail the registration if API call fails - user can try again later
+      }
+      
       return { success: true, user: userCredential.user };
     } catch (error) {
       console.error('Registration error:', error);

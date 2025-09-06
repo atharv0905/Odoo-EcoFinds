@@ -7,60 +7,75 @@
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 <body>
+    <!-- Navbar will be inserted here by navbar.js -->
+    
     <div class="container">
         <div class="dashboard-container">
+            <!-- Dashboard Header -->
             <div class="dashboard-header">
-                <h1>EcoFinds Dashboard</h1>
+                <h1>Discover Eco-Friendly Products</h1>
                 <p class="welcome-message">Welcome back, <span id="userName">User</span>!</p>
             </div>
-            
-            <div class="dashboard-content">
-                <div class="dashboard-stats">
-                    <div class="stat-card">
-                        <div class="stat-value">24</div>
-                        <div class="stat-label">Eco Products</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">12</div>
-                        <div class="stat-label">Saved Items</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">8</div>
-                        <div class="stat-label">Categories</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">156</div>
-                        <div class="stat-label">Points Earned</div>
-                    </div>
+
+            <!-- Dashboard Stats -->
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalProducts">0</div>
+                    <div class="stat-label">Available Products</div>
                 </div>
-                
-                <div style="text-align: left;">
-                    <h3 style="margin-bottom: 1rem; color: #333;">Recent Activity</h3>
-                    <div style="background: rgba(255,255,255,0.5); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
-                        <p style="margin-bottom: 0.5rem;"><strong>🌱 New eco-friendly product added:</strong> Bamboo Water Bottle</p>
-                        <small style="color: #666;">2 hours ago</small>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.5); padding: 1rem; border-radius: 10px; margin-bottom: 1rem;">
-                        <p style="margin-bottom: 0.5rem;"><strong>🏆 Achievement unlocked:</strong> First Product Listed</p>
-                        <small style="color: #666;">1 day ago</small>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.5); padding: 1rem; border-radius: 10px;">
-                        <p style="margin-bottom: 0.5rem;"><strong>💚 You saved 2.4kg CO2</strong> with your recent purchases</p>
-                        <small style="color: #666;">3 days ago</small>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="cartItems">0</div>
+                    <div class="stat-label">Cart Items</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="userPoints">0</div>
+                    <div class="stat-label">Eco Points</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="purchaseCount">0</div>
+                    <div class="stat-label">Purchases</div>
                 </div>
             </div>
-            
-            <div style="display: flex; gap: 1rem;">
-                <button class="btn btn-primary" style="flex: 1;" onclick="alert('Feature coming soon!')">Browse Products</button>
-                <button class="btn btn-secondary" style="flex: 1;" onclick="alert('Feature coming soon!')">Add Product</button>
+
+            <!-- Search & Filter Section -->
+            <div class="search-filter-section">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-category="all">All Products</button>
+                    <button class="filter-btn" data-category="Kitchen">Kitchen</button>
+                    <button class="filter-btn" data-category="Personal Care">Personal Care</button>
+                    <button class="filter-btn" data-category="Electronics">Electronics</button>
+                    <button class="filter-btn" data-category="Home & Garden">Home & Garden</button>
+                    <button class="filter-btn" data-category="Fashion">Fashion</button>
+                </div>
             </div>
-            
-            <div style="margin-top: 1rem;">
-                <button class="btn btn-secondary" id="logoutBtn">
-                    <span id="logoutText">Sign Out</span>
-                    <div id="logoutLoading" class="loading hidden"></div>
-                </button>
+
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Loading eco-friendly products...</p>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="productsGrid" class="products-grid">
+                <!-- Products will be loaded here dynamically -->
+            </div>
+
+            <!-- No Products Found Component -->
+            <div id="noProductsFound" class="no-products-found hidden">
+                <div class="no-products-content">
+                    <div class="no-products-icon">🌱</div>
+                    <h3>No Products Found</h3>
+                    <p>We couldn't find any eco-friendly products matching your criteria.</p>
+                    <p>Try adjusting your search or browse all categories.</p>
+                    <button class="btn btn-primary" onclick="clearFilters()">Show All Products</button>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="pagination-container hidden">
+                <button id="prevPage" class="btn btn-secondary">Previous</button>
+                <span id="pageInfo" class="page-info">Page 1 of 1</span>
+                <button id="nextPage" class="btn btn-secondary">Next</button>
             </div>
         </div>
     </div>
@@ -71,7 +86,9 @@
     
     <!-- App Scripts -->
     <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/api-service.js"></script>
     <script src="../assets/js/auth-service.js"></script>
+    <script src="../assets/js/navbar.js"></script>
     <script src="../assets/js/dashboard.js"></script>
 </body>
 </html>

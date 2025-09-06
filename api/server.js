@@ -9,6 +9,7 @@ const userRoutes = require('./routes/userRoutes');
 const productRoutes = require('./routes/productRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const purchaseRoutes = require('./routes/purchaseRoutes');
+const productOrderRoutes = require('./routes/productOrderRoutes');
 
 // Initialize Express app
 const app = express();
@@ -38,6 +39,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/purchases', purchaseRoutes);
+app.use('/api/product-orders', productOrderRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -48,7 +50,8 @@ app.get('/', (req, res) => {
       users: '/api/users',
       products: '/api/products',
       cart: '/api/cart',
-      purchases: '/api/purchases'
+      purchases: '/api/purchases',
+      productOrders: '/api/product-orders'
     }
   });
 });

@@ -5,7 +5,7 @@ const Product = require('../models/Product');
 // Create product
 router.post('/', async (req, res) => {
   try {
-    const { title, description, category, price, image, createdBy } = req.body;
+    const { title, description, category, price, image, createdBy, stock = 0 } = req.body;
 
     const product = new Product({
       title,
@@ -13,7 +13,9 @@ router.post('/', async (req, res) => {
       category,
       price,
       image,
-      createdBy
+      createdBy,
+      stock,
+      isActive: stock > 0
     });
 
     const savedProduct = await product.save();
@@ -31,7 +33,7 @@ router.post('/', async (req, res) => {
 // Update product (owners can update their product details)
 router.put('/:id', async (req, res) => {
   try {
-    const { title, description, category, price, image, createdBy } = req.body;
+    const { title, description, category, price, image, createdBy, stock } = req.body;
     
     // Get current product to verify ownership
     const currentProduct = await Product.findById(req.params.id);
@@ -54,6 +56,10 @@ router.put('/:id', async (req, res) => {
     if (category) updateData.category = category;
     if (price !== undefined) updateData.price = price;
     if (image) updateData.image = image;
+    if (stock !== undefined) {
+      updateData.stock = stock;
+      updateData.isActive = stock > 0;
+    }
 
     const product = await Product.findByIdAndUpdate(
       req.params.id,
@@ -112,10 +118,13 @@ router.get('/user/:userId', async (req, res) => {
   }
 });
 
-// Get all products
+// Get all products (only active products with stock)
 router.get('/', async (req, res) => {
   try {
-    const products = await Product.find().sort({ createdAt: -1 });
+    const products = await Product.find({ 
+      isActive: true, 
+      stock: { $gt: 0 } 
+    }).sort({ createdAt: -1 });
     res.json({
       message: 'Products retrieved successfully',
       products,
@@ -275,6 +284,68 @@ router.get('/filter/:category', async (req, res) => {
       products,
       count: products.length,
       category
+    });
+  } catch (error) {
+    res.status(400).json({ 
+      error: error.message 
+    });
+  }
+});
+
+// Update product stock
+router.patch('/:id/stock', async (req, res) => {
+  try {
+    const { stock, createdBy } = req.body;
+    
+    if (stock === undefined || stock < 0) {
+      return res.status(400).json({ 
+        error: 'Valid stock quantity is required' 
+      });
+    }
+
+    // Get current product to verify ownership
+    const currentProduct = await Product.findById(req.params.id);
+    if (!currentProduct) {
+      return res.status(404).json({ 
+        error: 'Product not found' 
+      });
+    }
+
+    // Verify ownership
+    if (createdBy && currentProduct.createdBy !== createdBy) {
+      return res.status(403).json({ 
+        error: 'You can only update stock for your own products' 
+      });
+    }
+
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      { 
+        stock: stock,
+        isActive: stock > 0
+      },
+      { new: true, runValidators: true }
+    );
+
+    res.json({
+      message: 'Product stock updated successfully',
+      product
+    });
+  } catch (error) {
+    res.status(400).json({ 
+      error: error.message 
+    });
+  }
+});
+
+// Get all products for management (includes inactive products)
+router.get('/all/management', async (req, res) => {
+  try {
+    const products = await Product.find().sort({ createdAt: -1 });
+    res.json({
+      message: 'All products retrieved successfully',
+      products,
+      count: products.length
     });
   } catch (error) {
     res.status(400).json({ 

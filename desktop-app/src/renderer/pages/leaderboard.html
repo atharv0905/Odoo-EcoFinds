@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFinds - Leaderboard</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <!-- Navbar will be inserted here by navbar.js -->
+    
+    <div class="container">
+        <div class="leaderboard-container">
+            <!-- Leaderboard Header -->
+            <div class="leaderboard-header">
+                <h1>🏆 Eco Champions Leaderboard</h1>
+                <p class="leaderboard-subtitle">Celebrating our top eco-warriors making a difference!</p>
+            </div>
+
+            <!-- User's Rank Card -->
+            <div class="user-rank-card">
+                <div class="rank-content">
+                    <div class="rank-info">
+                        <div class="rank-position">#<span id="userRank">--</span></div>
+                        <div class="rank-details">
+                            <div class="rank-name" id="userName">Your Name</div>
+                            <div class="rank-points"><span id="userPoints">0</span> points</div>
+                        </div>
+                    </div>
+                    <div class="rank-badge">
+                        <div class="badge-icon">🌱</div>
+                        <div class="badge-text">Your Rank</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top 3 Podium -->
+            <div class="podium-section">
+                <h2>🥇 Top 3 Eco Champions</h2>
+                <div class="podium">
+                    <div class="podium-place second">
+                        <div class="podium-avatar">
+                            <span class="avatar-text">2</span>
+                        </div>
+                        <div class="podium-info">
+                            <div class="podium-name" id="rank2Name">Runner-up</div>
+                            <div class="podium-points" id="rank2Points">0 pts</div>
+                        </div>
+                        <div class="podium-medal">🥈</div>
+                    </div>
+
+                    <div class="podium-place first">
+                        <div class="podium-avatar winner">
+                            <span class="avatar-text">1</span>
+                        </div>
+                        <div class="podium-info">
+                            <div class="podium-name" id="rank1Name">Champion</div>
+                            <div class="podium-points" id="rank1Points">0 pts</div>
+                        </div>
+                        <div class="podium-medal">🥇</div>
+                    </div>
+
+                    <div class="podium-place third">
+                        <div class="podium-avatar">
+                            <span class="avatar-text">3</span>
+                        </div>
+                        <div class="podium-info">
+                            <div class="podium-name" id="rank3Name">Third Place</div>
+                            <div class="podium-points" id="rank3Points">0 pts</div>
+                        </div>
+                        <div class="podium-medal">🥉</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full Leaderboard -->
+            <div class="full-leaderboard">
+                <div class="leaderboard-controls">
+                    <h2>Complete Rankings</h2>
+                    <div class="controls">
+                        <select id="categoryFilter" class="filter-select">
+                            <option value="points">By Points</option>
+                            <option value="purchases">By Purchases</option>
+                            <option value="impact">By Eco Impact</option>
+                        </select>
+                        <button id="refreshBtn" class="btn btn-secondary">🔄 Refresh</button>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div id="leaderboardLoading" class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Loading leaderboard...</p>
+                </div>
+
+                <!-- Leaderboard List -->
+                <div id="leaderboardList" class="leaderboard-list hidden">
+                    <!-- Leaderboard items will be loaded here -->
+                </div>
+
+                <!-- No Data State -->
+                <div id="noLeaderboardData" class="no-data hidden">
+                    <div class="no-data-icon">🏆</div>
+                    <h3>Building the leaderboard...</h3>
+                    <p>As more users join EcoFinds and make eco-friendly purchases, they'll appear here!</p>
+                </div>
+            </div>
+
+            <!-- Eco Impact Stats -->
+            <div class="impact-stats-section">
+                <h2>🌍 Collective Eco Impact</h2>
+                <div class="impact-stats-grid">
+                    <div class="impact-stat">
+                        <div class="impact-icon">🌱</div>
+                        <div class="impact-value" id="totalCO2Saved">0 kg</div>
+                        <div class="impact-label">CO2 Saved</div>
+                    </div>
+                    
+                    <div class="impact-stat">
+                        <div class="impact-icon">💧</div>
+                        <div class="impact-value" id="totalWaterSaved">0 L</div>
+                        <div class="impact-label">Water Conserved</div>
+                    </div>
+                    
+                    <div class="impact-stat">
+                        <div class="impact-icon">🗑️</div>
+                        <div class="impact-value" id="totalWastePrevented">0 g</div>
+                        <div class="impact-label">Waste Prevented</div>
+                    </div>
+                    
+                    <div class="impact-stat">
+                        <div class="impact-icon">👥</div>
+                        <div class="impact-value" id="totalEcoWarriors">0</div>
+                        <div class="impact-label">Eco Warriors</div>
+                    </div>
+                </div>
+                
+                <div class="impact-message">
+                    <p>Together, we're making a real difference for our planet! Every eco-friendly purchase counts. 🌍💚</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/api-service.js"></script>
+    <script src="../assets/js/auth-service.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/leaderboard.js"></script>
+</body>
+</html>
