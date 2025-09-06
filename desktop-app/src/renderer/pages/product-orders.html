@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFinds - Product Orders</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <!-- Navbar will be inserted here by navbar.js -->
+    
+    <div class="container">
+        <div class="product-orders-container">
+            <!-- Header Section -->
+            <div class="page-header">
+                <div class="header-content">
+                    <h1>📋 Product Orders</h1>
+                    <p class="page-subtitle">Manage orders for your eco-friendly products</p>
+                </div>
+                <div class="header-actions">
+                    <button id="exportOrdersBtn" class="btn btn-secondary">
+                        <span class="btn-icon">📊</span>
+                        Export Orders
+                    </button>
+                    <a href="my-products.html" class="btn btn-primary">
+                        <span class="btn-icon">📦</span>
+                        My Products
+                    </a>
+                </div>
+            </div>
+
+            <!-- Statistics Dashboard -->
+            <div class="stats-dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card total">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalOrders">0</div>
+                            <div class="stat-label">Total Orders</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card pending">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="pendingOrders">0</div>
+                            <div class="stat-label">Pending Orders</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card revenue">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalRevenue">$0</div>
+                            <div class="stat-label">Total Revenue</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card average">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="averageOrder">$0</div>
+                            <div class="stat-label">Avg Order Value</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Status Breakdown -->
+                <div class="status-breakdown">
+                    <h3>Order Status Overview</h3>
+                    <div class="status-bars">
+                        <div class="status-bar">
+                            <div class="status-info">
+                                <span class="status-label">Pending</span>
+                                <span class="status-count" id="pendingCount">0</span>
+                            </div>
+                            <div class="status-progress">
+                                <div class="progress-fill pending" id="pendingProgress"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="status-bar">
+                            <div class="status-info">
+                                <span class="status-label">Confirmed</span>
+                                <span class="status-count" id="confirmedCount">0</span>
+                            </div>
+                            <div class="status-progress">
+                                <div class="progress-fill confirmed" id="confirmedProgress"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="status-bar">
+                            <div class="status-info">
+                                <span class="status-label">Shipped</span>
+                                <span class="status-count" id="shippedCount">0</span>
+                            </div>
+                            <div class="status-progress">
+                                <div class="progress-fill shipped" id="shippedProgress"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="status-bar">
+                            <div class="status-info">
+                                <span class="status-label">Delivered</span>
+                                <span class="status-count" id="deliveredCount">0</span>
+                            </div>
+                            <div class="status-progress">
+                                <div class="progress-fill delivered" id="deliveredProgress"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters and Search -->
+            <div class="controls-section">
+                <div class="search-controls">
+                    <input type="text" id="orderSearch" placeholder="Search orders by order ID or buyer..." class="search-input">
+                    <button id="searchBtn" class="btn btn-secondary">🔍</button>
+                </div>
+                
+                <div class="filter-controls">
+                    <select id="statusFilter" class="filter-select">
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="confirmed">Confirmed</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                    
+                    <select id="timeFilter" class="filter-select">
+                        <option value="all">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="quarter">This Quarter</option>
+                    </select>
+                    
+                    <button id="refreshBtn" class="btn btn-secondary">🔄 Refresh</button>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="ordersLoading" class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Loading your product orders...</p>
+            </div>
+
+            <!-- Orders List -->
+            <div id="ordersContent" class="orders-content hidden">
+                <div class="orders-header">
+                    <h2>Order Management</h2>
+                    <div class="bulk-actions">
+                        <button id="selectAllBtn" class="btn btn-secondary btn-sm">Select All</button>
+                        <button id="bulkConfirmBtn" class="btn btn-primary btn-sm" disabled>Bulk Confirm</button>
+                        <button id="bulkShipBtn" class="btn btn-primary btn-sm" disabled>Bulk Ship</button>
+                    </div>
+                </div>
+                
+                <div id="ordersList" class="orders-list">
+                    <!-- Orders will be loaded here -->
+                </div>
+            </div>
+
+            <!-- No Orders State -->
+            <div id="noOrders" class="no-orders hidden">
+                <div class="no-orders-content">
+                    <div class="no-orders-icon">📋</div>
+                    <h3>No orders yet</h3>
+                    <p>When customers purchase your products, their orders will appear here for you to manage.</p>
+                    <a href="my-products.html" class="btn btn-primary">
+                        View My Products
+                    </a>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div id="pagination" class="pagination-container hidden">
+                <button id="prevPage" class="btn btn-secondary">← Previous</button>
+                <span id="pageInfo" class="page-info">Page 1 of 1</span>
+                <button id="nextPage" class="btn btn-secondary">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Detail Modal -->
+    <div id="orderDetailModal" class="modal hidden">
+        <div class="modal-content order-detail-modal">
+            <div class="modal-header">
+                <h3>Order Details</h3>
+                <button class="modal-close" onclick="hideOrderDetailModal()">×</button>
+            </div>
+            
+            <div id="orderDetailContent" class="modal-body">
+                <!-- Order details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Action Confirmation Modal -->
+    <div id="bulkActionModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Bulk Action</h3>
+                <button class="modal-close" onclick="hideBulkActionModal()">×</button>
+            </div>
+            
+            <div class="modal-body">
+                <p id="bulkActionMessage">Are you sure you want to perform this action?</p>
+                <div class="selected-orders" id="selectedOrdersList">
+                    <!-- Selected orders will be listed here -->
+                </div>
+                
+                <div class="form-actions">
+                    <button class="btn btn-secondary" onclick="hideBulkActionModal()">Cancel</button>
+                    <button class="btn btn-primary" id="confirmBulkActionBtn">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/api-service.js"></script>
+    <script src="../assets/js/auth-service.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/product-orders.js"></script>
+</body>
+</html>

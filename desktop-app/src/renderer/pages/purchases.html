@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFinds - Purchase History</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body>
+    <!-- Navbar will be inserted here by navbar.js -->
+    
+    <div class="container">
+        <div class="purchases-container">
+            <!-- Purchases Header -->
+            <div class="purchases-header">
+                <h1>📦 Purchase History</h1>
+                <p class="purchases-subtitle">Track your eco-friendly purchases and impact</p>
+            </div>
+
+            <!-- Purchase Stats -->
+            <div class="purchase-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">🛒</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalPurchases">0</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalProducts">0</div>
+                        <div class="stat-label">Products Bought</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">🌱</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="ecoImpact">0</div>
+                        <div class="stat-label">Eco Points Earned</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-content">
+                        <div class="stat-value" id="totalSpent">$0</div>
+                        <div class="stat-label">Total Spent</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State -->
+            <div id="purchasesLoading" class="loading-state">
+                <div class="loading-spinner"></div>
+                <p>Loading your purchase history...</p>
+            </div>
+
+            <!-- Purchases List -->
+            <div id="purchasesContent" class="purchases-content hidden">
+                <div class="purchases-header-section">
+                    <h2>Your Orders</h2>
+                    <div class="filter-options">
+                        <select id="sortFilter" class="filter-select">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="purchasesList" class="purchases-list">
+                    <!-- Purchase items will be loaded here -->
+                </div>
+            </div>
+
+            <!-- No Purchases State -->
+            <div id="noPurchases" class="no-purchases hidden">
+                <div class="no-purchases-content">
+                    <div class="no-purchases-icon">📦</div>
+                    <h3>No purchases yet</h3>
+                    <p>Start shopping for eco-friendly products to see your purchase history here!</p>
+                    <button class="btn btn-primary" onclick="window.location.href='dashboard.html'">
+                        Start Shopping
+                    </button>
+                </div>
+            </div>
+
+            <!-- Eco Impact Section -->
+            <div id="ecoImpactSection" class="eco-impact-section hidden">
+                <div class="impact-card">
+                    <h3>🌍 Your Environmental Impact</h3>
+                    <div class="impact-grid">
+                        <div class="impact-item">
+                            <div class="impact-icon">🌱</div>
+                            <div class="impact-content">
+                                <div class="impact-value" id="carbonSaved">0 kg</div>
+                                <div class="impact-label">CO2 Saved</div>
+                            </div>
+                        </div>
+                        
+                        <div class="impact-item">
+                            <div class="impact-icon">💧</div>
+                            <div class="impact-content">
+                                <div class="impact-value" id="waterSaved">0 L</div>
+                                <div class="impact-label">Water Saved</div>
+                            </div>
+                        </div>
+                        
+                        <div class="impact-item">
+                            <div class="impact-icon">🗑️</div>
+                            <div class="impact-content">
+                                <div class="impact-value" id="wastePrevented">0 g</div>
+                                <div class="impact-label">Waste Prevented</div>
+                            </div>
+                        </div>
+                        
+                        <div class="impact-item">
+                            <div class="impact-icon">🏆</div>
+                            <div class="impact-content">
+                                <div class="impact-value" id="ecoRank">Eco Warrior</div>
+                                <div class="impact-label">Your Rank</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="impact-message">
+                        <p>Thank you for choosing eco-friendly products! Your purchases are making a positive impact on our planet. 🌍💚</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Detail Modal -->
+    <div id="purchaseModal" class="modal hidden">
+        <div class="modal-content purchase-modal">
+            <div class="modal-header">
+                <h3>Order Details</h3>
+                <button class="modal-close" onclick="hidePurchaseModal()">×</button>
+            </div>
+            <div id="purchaseModalContent" class="modal-body">
+                <!-- Purchase details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    
+    <!-- App Scripts -->
+    <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/api-service.js"></script>
+    <script src="../assets/js/auth-service.js"></script>
+    <script src="../assets/js/navbar.js"></script>
+    <script src="../assets/js/purchases.js"></script>
+</body>
+</html>
