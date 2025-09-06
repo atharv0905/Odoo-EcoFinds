@@ -14,6 +14,7 @@ const purchaseRoutes = require('./routes/purchaseRoutes');
 const productOrderRoutes = require('./routes/productOrderRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 // Initialize Express app
 const app = express();
@@ -64,6 +65,7 @@ app.use('/api/purchases', purchaseRoutes);
 app.use('/api/product-orders', productOrderRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Root endpoint
 app.get('/', (req, res) => {
@@ -77,7 +79,8 @@ app.get('/', (req, res) => {
       purchases: '/api/purchases',
       productOrders: '/api/product-orders',
       orders: '/api/orders',
-      payments: '/api/payments'
+      payments: '/api/payments',
+      admin: '/api/admin'
     }
   });
 });

@@ -4,17 +4,13 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAdminAuth } from '../contexts/AdminAuthContext';
 
-export default function Home() {
-  const router = useRouter();
+export default function AdminAuthGuard({ children }) {
   const { isAuthenticated, loading } = useAdminAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    if (!loading) {
-      if (isAuthenticated) {
-        router.push('/admin');
-      } else {
-        router.push('/login');
-      }
+    if (!loading && !isAuthenticated) {
+      router.push('/login');
     }
   }, [isAuthenticated, loading, router]);
 
@@ -26,5 +22,9 @@ export default function Home() {
     );
   }
 
-  return null;
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  return children;
 }

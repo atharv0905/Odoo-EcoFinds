@@ -76,6 +76,18 @@ const orderSchema = new mongoose.Schema({
     type: String,
     enum: ['draft', 'pending_payment', 'paid', 'processing', 'shipped', 'delivered', 'cancelled'],
     default: 'draft'
+  },
+  // Admin manual payment tracking
+  adminProcessed: {
+    type: Boolean,
+    default: false
+  },
+  adminProcessedAt: {
+    type: Date
+  },
+  adminNotes: {
+    type: String,
+    maxlength: 500
   }
 }, {
   timestamps: true
@@ -86,6 +98,8 @@ orderSchema.index({ buyerId: 1, createdAt: -1 });
 orderSchema.index({ paymentStatus: 1 });
 orderSchema.index({ status: 1 });
 orderSchema.index({ razorpayOrderId: 1 });
+orderSchema.index({ adminProcessed: 1 });
+orderSchema.index({ paymentMethod: 1, paymentStatus: 1 });
 
 // Virtual for order age
 orderSchema.virtual('orderAge').get(function() {
