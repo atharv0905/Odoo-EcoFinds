@@ -1,12 +1,15 @@
+// Load environment variables
+require('dotenv').config();
+
 // Firebase Configuration using compat version for better Electron support
 const firebaseConfig = {
-    apiKey: "AIzaSyDpov_8-cCbm9fCngmt1kX_Uacp3ZvY0vw",
-    authDomain: "ecofinds-odoo.firebaseapp.com",
-    projectId: "ecofinds-odoo",
-    storageBucket: "ecofinds-odoo.firebasestorage.app",
-    messagingSenderId: "873623910045",
-    appId: "1:873623910045:web:e4e3d2a10f17851517c674",
-    measurementId: "G-H93CS8GXQY"
+    apiKey: process.env.FIREBASE_API_KEY,
+    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.FIREBASE_APP_ID,
+    measurementId: process.env.FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
