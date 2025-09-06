@@ -11,6 +11,8 @@ A comprehensive Node.js + Express + MongoDB backend API for EcoFinds - A sustain
 - Advanced search and filtering
 - **Multiple image uploads with Cloudinary integration**
 - **Automatic image optimization and cloud storage**
+- **Email notifications for orders, payments, and user events**
+- **Dual ID system supporting both Firebase and MongoDB IDs**
 - Gamification system with points and badges
 - Payment configuration support (Razorpay integration ready)
 - Proper MongoDB indexing for optimal performance
@@ -31,6 +33,8 @@ api/
 │   └── purchaseRoutes.js # Purchase tracking endpoints
 ├── config/
 │   └── cloudinary.js    # Cloudinary configuration and upload utilities
+├── services/
+│   └── emailService.js  # Email service with templates and notifications
 ├── server.js            # Main Express server setup
 ├── package.json         # Dependencies and scripts
 └── .env                 # Environment variables
@@ -57,6 +61,11 @@ PORT=5000
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+# Email Configuration (for notifications)
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_app_password
+FRONTEND_URL=http://localhost:3000
 ```
 
 ### 3. Install Development Dependencies (Optional)
@@ -69,7 +78,13 @@ npm install nodemon --save-dev
 2. Get your Cloud Name, API Key, and API Secret from the dashboard
 3. Add them to your `.env` file as shown above
 
-### 5. Start the Server
+### 5. Email Setup
+1. For Gmail: Enable 2-factor authentication and create an App Password
+2. For other providers: Use your regular email credentials
+3. Add email credentials to your `.env` file as shown above
+4. Set your frontend URL for email links
+
+### 6. Start the Server
 ```bash
 # Production
 npm start
@@ -79,6 +94,44 @@ npm run dev
 ```
 
 The server will run on `http://localhost:5000`
+
+## 🌐 CORS Configuration
+
+The API is configured to accept requests from **any domain** without CORS issues:
+
+### ✅ **What's Allowed:**
+- **All Origins**: Any domain can make requests to the API
+- **All Methods**: GET, POST, PUT, DELETE, PATCH, OPTIONS
+- **All Headers**: Content-Type, Authorization, etc.
+- **Preflight Requests**: Automatically handled for complex requests
+- **File Uploads**: Multipart/form-data requests supported
+
+### 🔧 **Frontend Integration:**
+No special CORS configuration needed on the frontend. You can call the API from:
+- `localhost:3000` (React/Vue/Angular dev servers)
+- `file://` protocols (Electron apps)
+- Any production domain
+- Mobile apps (React Native, Flutter, etc.)
+
+### 📝 **Example Frontend Usage:**
+```javascript
+// This will work from any domain
+fetch('http://localhost:5000/api/products/', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    title: 'Test Product',
+    description: 'Test Description',
+    category: 'Test',
+    price: 10.99,
+    createdBy: 'user123'
+  })
+})
+.then(response => response.json())
+.then(data => console.log(data));
+```
 
 ## 📚 API Documentation
 
@@ -96,13 +149,27 @@ GET /health
 
 ## 👥 User Management
 
-### Create User
+### Create User (with Firebase ID)
 **Endpoint:** `POST /api/users/`
-**Description:** Create a new user (only name and email are required)
+**Description:** Create a new user with Firebase ID (Firebase ID, name and email are required)
 
 **Request Body:**
 ```json
 {
+  "firebaseId": "firebase_user_123456789",
+  "email": "john@example.com",
+  "name": "John Doe"
+}
+```
+
+### Create User from Firebase
+**Endpoint:** `POST /api/users/firebase`
+**Description:** Create user from existing Firebase authentication (checks if user already exists)
+
+**Request Body:**
+```json
+{
+  "firebaseId": "firebase_user_123456789",
   "email": "john@example.com",
   "name": "John Doe"
 }
@@ -111,9 +178,10 @@ GET /health
 **Response:**
 ```json
 {
-  "message": "User created successfully. Complete your profile using the update endpoint.",
+  "message": "User created successfully. Welcome email sent! Complete your profile using the update endpoint.",
   "user": {
     "_id": "64f8a1b2c3d4e5f6a7b8c9d0",
+    "firebaseId": "firebase_user_123456789",
     "email": "john@example.com",
     "name": "John Doe",
     "role": "user",
@@ -130,8 +198,19 @@ GET /health
 }
 ```
 
-### Get User by ID
+### Get User by MongoDB ID
 **Endpoint:** `GET /api/users/:id`
+
+**Response:**
+```json
+{
+  "message": "User retrieved successfully",
+  "user": { ... }
+}
+```
+
+### Get User by Firebase ID
+**Endpoint:** `GET /api/users/firebase/:firebaseId`
 
 **Response:**
 ```json
@@ -231,7 +310,7 @@ GET /health
 - `description` (string, required): Product description  
 - `category` (string, required): Product category
 - `price` (number, required): Product price
-- `createdBy` (string, required): User ID of product creator
+- `createdByFId` (string, required): Firebase ID of product creator
 - `stock` (number, optional, default: 0): Available stock
 - `images` (files, required): 1-5 image files (max 5MB each)
 
@@ -428,7 +507,10 @@ GET /health
 }
 ```
 
-### Get User's Products
+### Get User's Products by Firebase ID
+**Endpoint:** `GET /api/products/user/firebase/:firebaseId`
+
+### Get User's Products by MongoDB ID
 **Endpoint:** `GET /api/products/user/:userId`
 
 ### Smart Product Search (Recommended)
@@ -810,7 +892,7 @@ curl -X POST http://localhost:5000/api/products/no-images \
     "category": "Personal Care",
     "price": 8.99,
     "stock": 100,
-    "createdBy": "USER_ID_HERE"
+    "createdByFId": "FIREBASE_USER_ID_HERE"
   }'
 ```
 
@@ -949,6 +1031,7 @@ fetch('http://localhost:5000/api/users/USER_ID_HERE', {
 ## 🏗️ Database Schema & Indexing
 
 ### User Model Indexes
+- `firebaseId` (unique)
 - `email` (unique)
 - `role`
 
@@ -959,6 +1042,17 @@ fetch('http://localhost:5000/api/users/USER_ID_HERE', {
 - Compound index: `{ category: 1, title: 1 }`
 - Compound index: `{ isActive: 1, stock: 1 }`
 
+### User Model Fields (Updated)
+- `firebaseId`: String (required, unique, indexed) - Firebase authentication ID
+- `email`: String (required, unique, lowercase) - User email address
+- `name`: String (required) - User's full name
+- `phone`: String (optional) - User's phone number
+- `role`: String (enum: user/admin, default: user) - User role
+- `paymentConfig`: Object - Payment configuration settings
+- `gamification`: Object - Points, badges, and level system
+- `createdAt`: Date - Creation timestamp
+- `updatedAt`: Date - Last update timestamp
+
 ### Product Model Fields (Updated)
 - `title`: String (required, max 200 chars) - Product title
 - `description`: String (required, max 1000 chars) - Product description
@@ -968,7 +1062,8 @@ fetch('http://localhost:5000/api/users/USER_ID_HERE', {
   - `url`: String (required) - Cloudinary image URL
   - `publicId`: String (required) - Cloudinary public ID for deletion
   - `alt`: String (optional) - Alt text for accessibility
-- `createdBy`: String (required, indexed) - Product creator user ID
+- `createdByFId`: String (required, indexed) - Firebase ID of product creator
+- `createdBy`: ObjectId (required, ref: User, indexed) - MongoDB ObjectId of product creator
 - `stock`: Number (default: 0, min: 0) - Available quantity
 - `isActive`: Boolean (default: true, indexed) - Product visibility
 - `totalSold`: Number (default: 0, min: 0) - Total units sold
@@ -1021,9 +1116,38 @@ Common HTTP status codes:
 
 ---
 
+## 📧 Email Notifications
+
+The API automatically sends email notifications for various events:
+
+### Email Events
+- **Welcome Email**: Sent when a new user is created
+- **Order Received**: Sent to seller when someone places an order for their product
+- **Order Placed**: Sent to buyer when they place an order
+- **Payment Completed**: Sent to buyer when order is delivered (payment completion)
+
+### Email Templates
+All emails are beautifully designed with:
+- Responsive HTML templates
+- EcoFinds branding and colors
+- Clear call-to-action buttons
+- Order details and next steps
+- Professional styling
+
+### Email Configuration
+- Uses Nodemailer with Gmail (configurable for other providers)
+- Requires app password for Gmail (2FA enabled)
+- Graceful error handling (emails don't fail API operations)
+- Automatic retry logic for failed sends
+
 ## 🔧 Development Notes
 
-- **User Creation**: Only name and email are required. Other profile fields can be updated later
+- **Dual ID System**: 
+  - **Firebase ID** (`firebaseId`): For frontend authentication integration
+  - **MongoDB ObjectId** (`_id`): For database relationships and queries
+  - Products store both `createdByFId` (Firebase) and `createdBy` (MongoDB ObjectId)
+  - All routes support both ID types for maximum flexibility
+- **User Creation**: Firebase ID, name and email are required. Other profile fields can be updated later
 - **Profile Updates**: Dedicated endpoints for different profile sections (basic info, payment, gamification)
 - **Product Updates**: Users can update their own products with ownership verification
 - **Image Management**: 
@@ -1032,14 +1156,19 @@ Common HTTP status codes:
   - Automatic image optimization (800x800 max, auto quality, auto format)
   - Automatic cleanup when products/images are deleted
   - 5MB file size limit per image, supported formats: JPG, JPEG, PNG, WEBP, GIF
+- **CORS Configuration**: 
+  - **Allows requests from any domain** (`origin: '*'`)
+  - Supports all HTTP methods (GET, POST, PUT, DELETE, PATCH, OPTIONS)
+  - Handles preflight requests automatically
+  - No credentials required for cross-origin requests
 - **Smart Search**: Advanced search with text indexing, pagination, and regex fallback
-- **No Authentication**: No authentication required (for now)
+- **Email Integration**: Automatic email notifications for user and order events
 - **Role-based System**: Admin vs user roles for future privilege differentiation
 - **Clean Architecture**: Modular code structure with proper separation of concerns
 - **Error Handling**: Comprehensive error handling with meaningful JSON responses
 - **Performance**: Proper MongoDB indexing for optimal search and query performance
 - **Scalability**: Pagination support for large datasets, cloud-based image storage
-- **Integration Ready**: Payment configuration, gamification system, and image management ready for frontend
+- **Integration Ready**: Payment configuration, gamification system, image management, and email notifications ready for frontend
 
 ---
 

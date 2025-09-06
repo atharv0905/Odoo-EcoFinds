@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const ProductOrder = require('../models/ProductOrder');
 const Product = require('../models/Product');
+const User = require('../models/User');
+const { sendOrderReceivedEmail, sendOrderPlacedEmail, sendPaymentCompletedEmail } = require('../services/emailService');
 
 // Create a new product order
 router.post('/', async (req, res) => {
@@ -43,6 +45,10 @@ router.post('/', async (req, res) => {
       });
     }
 
+    // Get buyer and seller details for email
+    const buyer = await User.findById(buyerId);
+    const seller = await User.findById(sellerId);
+
     // Create the order
     const productOrder = new ProductOrder({
       productId,
@@ -64,8 +70,40 @@ router.post('/', async (req, res) => {
     // Populate product details for response
     await savedOrder.populate('productId', 'title image category');
 
+    // Send emails
+    try {
+      // Send order received email to seller
+      if (seller && seller.email) {
+        await sendOrderReceivedEmail(
+          seller.email,
+          seller.name,
+          product.title,
+          buyer.name,
+          quantity,
+          savedOrder.totalPrice
+        );
+        console.log('Order received email sent to seller');
+      }
+
+      // Send order placed email to buyer
+      if (buyer && buyer.email) {
+        await sendOrderPlacedEmail(
+          buyer.email,
+          buyer.name,
+          product.title,
+          seller.name,
+          quantity,
+          savedOrder.totalPrice
+        );
+        console.log('Order placed email sent to buyer');
+      }
+    } catch (emailError) {
+      console.error('Error sending order emails:', emailError);
+      // Don't fail order creation if emails fail
+    }
+
     res.status(201).json({
-      message: 'Order placed successfully',
+      message: 'Order placed successfully. Emails sent to both parties.',
       order: savedOrder
     });
   } catch (error) {

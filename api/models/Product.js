@@ -37,8 +37,15 @@ const productSchema = new mongoose.Schema({
       default: ''
     }
   }],
-  createdBy: {
+  createdByFId: {
     type: String,
+    required: true,
+    index: true,
+    trim: true
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true,
     index: true
   },
@@ -76,6 +83,7 @@ productSchema.index({
 
 // Additional indexes for better query performance
 productSchema.index({ category: 1, title: 1 });
+productSchema.index({ createdByFId: 1 });
 productSchema.index({ createdBy: 1 });
 productSchema.index({ createdAt: -1 });
 productSchema.index({ isActive: 1, stock: 1 });

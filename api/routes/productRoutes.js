@@ -1,17 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
+const User = require('../models/User');
 const { upload, uploadMultipleImages, deleteFromCloudinary } = require('../config/cloudinary');
 
 // Create product with image uploads
 router.post('/', upload.array('images', 5), async (req, res) => {
   try {
-    const { title, description, category, price, createdBy, stock = 0 } = req.body;
+    const { title, description, category, price, createdByFId, stock = 0 } = req.body;
 
     // Validate required fields
-    if (!title || !description || !category || !price || !createdBy) {
+    if (!title || !description || !category || !price || !createdByFId) {
       return res.status(400).json({ 
-        error: 'Title, description, category, price, and createdBy are required' 
+        error: 'Title, description, category, price, and createdByFId are required' 
+      });
+    }
+
+    // Find user by Firebase ID to get MongoDB ObjectId
+    const user = await User.findOne({ firebaseId: createdByFId });
+    if (!user) {
+      return res.status(404).json({ 
+        error: 'User not found. Please ensure the Firebase ID is correct.' 
       });
     }
 
@@ -31,7 +40,8 @@ router.post('/', upload.array('images', 5), async (req, res) => {
       category,
       price: parseFloat(price),
       images: uploadedImages,
-      createdBy,
+      createdByFId,
+      createdBy: user._id,
       stock: parseInt(stock),
       isActive: parseInt(stock) > 0
     });
@@ -63,7 +73,15 @@ router.post('/', upload.array('images', 5), async (req, res) => {
 // Create product without images (legacy support)
 router.post('/no-images', async (req, res) => {
   try {
-    const { title, description, category, price, createdBy, stock = 0 } = req.body;
+    const { title, description, category, price, createdByFId, stock = 0 } = req.body;
+
+    // Find user by Firebase ID to get MongoDB ObjectId
+    const user = await User.findOne({ firebaseId: createdByFId });
+    if (!user) {
+      return res.status(404).json({ 
+        error: 'User not found. Please ensure the Firebase ID is correct.' 
+      });
+    }
 
     const product = new Product({
       title,
@@ -71,7 +89,8 @@ router.post('/no-images', async (req, res) => {
       category,
       price: parseFloat(price),
       images: [], // Empty images array
-      createdBy,
+      createdByFId,
+      createdBy: user._id,
       stock: parseInt(stock),
       isActive: parseInt(stock) > 0
     });
@@ -91,7 +110,7 @@ router.post('/no-images', async (req, res) => {
 // Update product (owners can update their product details)
 router.put('/:id', async (req, res) => {
   try {
-    const { title, description, category, price, createdBy, stock } = req.body;
+    const { title, description, category, price, createdByFId, stock } = req.body;
     
     // Get current product to verify ownership
     const currentProduct = await Product.findById(req.params.id);
@@ -101,8 +120,8 @@ router.put('/:id', async (req, res) => {
       });
     }
 
-    // Optional: Add ownership check if createdBy is provided
-    if (createdBy && currentProduct.createdBy !== createdBy) {
+    // Optional: Add ownership check if createdByFId is provided
+    if (createdByFId && currentProduct.createdByFId !== createdByFId) {
       return res.status(403).json({ 
         error: 'You can only update your own products' 
       });
@@ -358,10 +377,30 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// Get user's products
+// Get user's products by Firebase ID
+router.get('/user/firebase/:firebaseId', async (req, res) => {
+  try {
+    const products = await Product.find({ createdByFId: req.params.firebaseId })
+                                  .populate('createdBy', 'name email')
+                                  .sort({ createdAt: -1 });
+    
+    res.json({
+      message: 'User products retrieved successfully',
+      products,
+      count: products.length
+    });
+  } catch (error) {
+    res.status(400).json({ 
+      error: error.message 
+    });
+  }
+});
+
+// Get user's products by MongoDB ID
 router.get('/user/:userId', async (req, res) => {
   try {
     const products = await Product.find({ createdBy: req.params.userId })
+                                  .populate('createdBy', 'name email')
                                   .sort({ createdAt: -1 });
     
     res.json({
